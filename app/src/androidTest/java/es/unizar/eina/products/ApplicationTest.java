@@ -1,4 +1,4 @@
-package es.unizar.eina.notepadv3;
+package es.unizar.eina.products;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
