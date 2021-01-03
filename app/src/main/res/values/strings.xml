@@ -1,11 +1,19 @@
 <resources>
     <string name="app_name">Productos</string>
+    <string name="shopping_list_name">Listas de compra</string>
     <string name="no_notes">Sin productos</string>
     <string name="action_settings">Configuración</string>
     <string name="menu_insert_prod">Nuevo producto</string>
+    <string name="menu_insert_sl">Nuevo producto</string>
+    <string name="menu_order_prod_name">Ordenar por nombre</string>
+    <string name="menu_order_prod_price">Ordenar por precio</string>
+    <string name="menu_order_prod_weight">Ordenar por peso</string>
+    <string name="menu_shopping_lists">Listas de Compra</string>
     <string name="menu_insert_list">Nueva lista</string>
     <string name="menu_delete">Borrar producto</string>
-    <string name="edit_product">Producto</string>
+    <string name="menu_delete_sl">Borrar lista de compra</string>
+    <string name="edit_product">Editar producto</string>
+    <string name="edit_product_sl">Editar lista de compra</string>
     <string name="edit_list">Lista</string>
     <string name="delete">Eliminar</string>
     <string name="name">Nombre</string>

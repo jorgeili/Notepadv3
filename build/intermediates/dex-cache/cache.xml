@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="C:\Users\jorge\.android\build-cache\d474ff4d368c9c8c9d7c8caaffda70dae15834c7\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="57ae0d750ff83f0c738d21720224ac7ea866a094">
+        <dex dex="C:\Users\jorge\ProyectoAndroid\app\build\intermediates\pre-dexed\debug\classes_53e91f6820d0d394892c8ef74ea3b34524b8d8b0.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\jorge\.android\build-cache\5f592972dde3b2e86f31c12ca55c91689a20650d\output\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="ddde541c289c8b816a8f8fd6c325d80788c522a6">
+        <dex dex="C:\Users\jorge\ProyectoAndroid\app\build\intermediates\pre-dexed\debug\classes_b92bece4dba9241013dfe87d6a479fbe1bd4f9f8.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\jorge\.android\build-cache\5f592972dde3b2e86f31c12ca55c91689a20650d\output\jars\libs\internal_impl-23.1.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="8716243bf04bae8d6c9ca94d27b9a9be7236f0a3">
+        <dex dex="C:\Users\jorge\ProyectoAndroid\app\build\intermediates\pre-dexed\debug\internal_impl-23.1.0_35746ec1af03f1d0865dc6876fe11f5cec59a817.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\jorge\.gradle\caches\modules-2\files-2.1\com.android.support\support-annotations\23.1.0\92e3fc113ec3ee36b64603a38857b95700025633\support-annotations-23.1.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="92e3fc113ec3ee36b64603a38857b95700025633">
+        <dex dex="C:\Users\jorge\ProyectoAndroid\app\build\intermediates\pre-dexed\debug\support-annotations-23.1.0_7c7b07f47a115ce61dda7eb573e3b3ac6dd315c8.jar" />
+    </item>
+
+</items>

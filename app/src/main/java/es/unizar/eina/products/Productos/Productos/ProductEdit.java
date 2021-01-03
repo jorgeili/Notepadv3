@@ -1,4 +1,4 @@
-package es.unizar.eina.products;
+package es.unizar.eina.products.Productos.Productos;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import es.unizar.eina.products.R;
 
 public class ProductEdit extends AppCompatActivity {
 
@@ -21,7 +23,7 @@ public class ProductEdit extends AppCompatActivity {
         setContentView(R.layout.product_edit);
         setTitle(R.string.edit_product);
 
-        mTitleText = (EditText) findViewById(R.id.title);
+        mTitleText = (EditText) findViewById(R.id.nameProd);
         mWeightText = (EditText) findViewById(R.id.weightProd);
         mPriceText = (EditText) findViewById(R.id.priceProd);
         mBodyText = (EditText) findViewById(R.id.body);
@@ -33,8 +35,8 @@ public class ProductEdit extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String title = extras.getString(ProductsDbAdapter.KEY_TITLE);
-            String weight = extras.getString(ProductsDbAdapter.KEY_WEIGHT);
-            String price = extras.getString(ProductsDbAdapter.KEY_PRICE);
+            Double weight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT,0);
+            Double price = extras.getDouble(ProductsDbAdapter.KEY_PRICE,0);
             String body = extras.getString(ProductsDbAdapter.KEY_BODY);
             mRowId = extras.getLong(ProductsDbAdapter.KEY_ROWID);
 
@@ -45,10 +47,10 @@ public class ProductEdit extends AppCompatActivity {
                 mBodyText.setText(body);
             }
             if (weight != null) {
-                mWeightText.setText(weight);
+                mWeightText.setText(Double.toString(weight));
             }
             if (price != null) {
-                mPriceText.setText(price);
+                mPriceText.setText(Double.toString(price));
             }
         }
 
@@ -58,8 +60,8 @@ public class ProductEdit extends AppCompatActivity {
                 Bundle bundle = new Bundle();
 
                 bundle.putString(ProductsDbAdapter.KEY_TITLE, mTitleText.getText().toString());
-                bundle.putString(ProductsDbAdapter.KEY_WEIGHT, mWeightText.getText().toString());
-                bundle.putString(ProductsDbAdapter.KEY_PRICE, mPriceText.getText().toString());
+                bundle.putDouble(ProductsDbAdapter.KEY_WEIGHT, Double.parseDouble(mWeightText.getText().toString()));
+                bundle.putDouble(ProductsDbAdapter.KEY_PRICE, Double.parseDouble(mPriceText.getText().toString()));
                 bundle.putString(ProductsDbAdapter.KEY_BODY, mBodyText.getText().toString());
 
                 if (mRowId != null) {
