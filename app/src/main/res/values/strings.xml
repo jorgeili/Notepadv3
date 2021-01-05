@@ -4,7 +4,7 @@
     <string name="no_notes">Sin productos</string>
     <string name="action_settings">Configuración</string>
     <string name="menu_insert_prod">Nuevo producto</string>
-    <string name="menu_insert_sl">Nuevo producto</string>
+    <string name="menu_insert_sl">Nueva lista</string>
     <string name="menu_order_prod_name">Ordenar por nombre</string>
     <string name="menu_order_prod_price">Ordenar por precio</string>
     <string name="menu_order_prod_weight">Ordenar por peso</string>

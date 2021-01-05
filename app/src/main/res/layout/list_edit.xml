@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout android:orientation="horizontal"
@@ -90,38 +91,27 @@
             android:gravity="start" />
     </LinearLayout>
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:text="@string/description"
-            android:layout_gravity="center_vertical"
-            android:textSize="17sp"
-            android:textColor="#000000"
-            android:gravity="center_horizontal"/>
-    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
-        <EditText android:id="@+id/body"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <ListView android:id="@+id/editListProducts"
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/add_product"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:scrollbars="vertical"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:hint="Describa su producto..."
-            android:layout_marginLeft="16dp"
-            android:padding="5dp"/>
+            android:background="@drawable/ic_baseline_add_24"/>
     </LinearLayout>
+
     <LinearLayout
         android:gravity="center|bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <Button android:id="@+id/delete"
             android:layout_width="0dp"
             android:layout_weight="0.50"
@@ -129,6 +119,7 @@
             android:layout_height="wrap_content"
             android:text="@string/delete"
             android:layout_gravity="start"/>
+
         <Button android:id="@+id/confirm"
             android:layout_width="0dp"
             android:layout_weight="0.50"
