@@ -7,6 +7,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Simple products database access helper class. Defines the basic CRUD operations
@@ -30,7 +35,6 @@ public class ProductsDbAdapter {
     public static final String KEY_TITLE_SL = "title";
     public static final String KEY_WEIGHT_SL = "weight";
     public static final String KEY_PRICE_SL = "price";
-    public static final String KEY_BODY_SL = "body";
 
     private static final String TAG = "ProductsDbAdapter";
     private DatabaseHelper mDbHelper;
@@ -45,7 +49,7 @@ public class ProductsDbAdapter {
 
     private static final String DATABASE_CREATE_SL =
             "create table shoppingLists (_id integer primary key autoincrement, "
-                    + "title text not null, weight double not null, price double not null, body text not null);";
+                    + "title text not null, weight double not null, price double not null);";
 
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE_P = "products";
@@ -136,15 +140,13 @@ public class ProductsDbAdapter {
      * @param title the title of the shopping list
      * @param weight the weight of the shopping list
      * @param price the price of the shopping list
-     * @param body the description of the shopping list
      * @return rowId or -1 if failed
      */
-    public long createShoppingList(String title, Double weight, Double price, String body) {
+    public long createShoppingList(String title, Double weight, Double price) {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_TITLE_SL, title);
         initialValues.put(KEY_WEIGHT_SL, weight);
         initialValues.put(KEY_PRICE_SL, price);
-        initialValues.put(KEY_BODY_SL, body);
 
         return mDb.insert(DATABASE_TABLE_SL, null, initialValues);
     }
@@ -178,8 +180,8 @@ public class ProductsDbAdapter {
      */
     public Cursor fetchAllShoppingLists() {
 
-        return mDb.query(DATABASE_TABLE_SL, new String[] {KEY_ROWID_SL, KEY_TITLE_SL, KEY_WEIGHT_SL, KEY_PRICE_SL,
-                KEY_BODY_SL}, null, null, null, null, null);
+        return mDb.query(DATABASE_TABLE_SL, new String[] {KEY_ROWID_SL, KEY_TITLE_SL, KEY_WEIGHT_SL, KEY_PRICE_SL
+        }, null, null, null, null, null);
     }
 
     /**
@@ -189,8 +191,8 @@ public class ProductsDbAdapter {
      */
     public Cursor fetchAllShoppingListsByName() {
 
-        return mDb.query(DATABASE_TABLE_SL, new String[] {KEY_ROWID_SL, KEY_TITLE_SL, KEY_WEIGHT_SL, KEY_PRICE_SL,
-                KEY_BODY_SL}, null, null, null, null, KEY_TITLE_SL);
+        return mDb.query(DATABASE_TABLE_SL, new String[] {KEY_ROWID_SL, KEY_TITLE_SL, KEY_WEIGHT_SL, KEY_PRICE_SL
+        }, null, null, null, null, KEY_TITLE_SL);
     }
 
     /**
@@ -200,8 +202,8 @@ public class ProductsDbAdapter {
      */
     public Cursor fetchAllShoppingListsByPrice() {
 
-        return mDb.query(DATABASE_TABLE_SL, new String[] {KEY_ROWID_SL, KEY_TITLE_SL, KEY_WEIGHT_SL, KEY_PRICE_SL,
-                KEY_BODY_SL}, null, null, null, null, KEY_PRICE_SL);
+        return mDb.query(DATABASE_TABLE_SL, new String[] {KEY_ROWID_SL, KEY_TITLE_SL, KEY_WEIGHT_SL, KEY_PRICE_SL
+        }, null, null, null, null, KEY_PRICE_SL);
     }
 
     /**
@@ -211,8 +213,8 @@ public class ProductsDbAdapter {
      */
     public Cursor fetchAllShoppingListsByWeight() {
 
-        return mDb.query(DATABASE_TABLE_SL, new String[] {KEY_ROWID_SL, KEY_TITLE_SL, KEY_WEIGHT_SL, KEY_PRICE_SL,
-                KEY_BODY_SL}, null, null, null, null, KEY_WEIGHT_SL);
+        return mDb.query(DATABASE_TABLE_SL, new String[] {KEY_ROWID_SL, KEY_TITLE_SL, KEY_WEIGHT_SL, KEY_PRICE_SL
+        }, null, null, null, null, KEY_WEIGHT_SL);
     }
 
     /**
@@ -311,16 +313,45 @@ public class ProductsDbAdapter {
      * @param title value to set shopping list title to
      * @param weight value to set shopping list weight to
      * @param price value to set shopping list price to
-     * @param body value to set shopping list body to
      * @return true if the shopping list was successfully updated, false otherwise
      */
-    public boolean updateShoppingList(long rowId, String title, Double weight, Double price, String body) {
+    public boolean updateShoppingList(long rowId, String title, Double weight, Double price) {
         ContentValues args = new ContentValues();
         args.put(KEY_TITLE_SL, title);
         args.put(KEY_WEIGHT_SL, weight);
         args.put(KEY_PRICE_SL, price);
-        args.put(KEY_BODY_SL, body);
 
         return mDb.update(DATABASE_TABLE_SL, args, KEY_ROWID_SL + "=" + rowId, null) > 0;
+    }
+
+    /**
+     * Function to load the spinner of Products data from SQLite database
+     * */
+    public ArrayAdapter<String> loadProducts(Spinner addProduct) {
+        Log.v("ERROR","LLEGOOOOOOOOOOOOOOOOO");
+
+        List<String> productos = new ArrayList<>();
+        Log.v("ERROR","LLEGOOOOOOOOOOOOOOOOO");
+
+        String getProducts = "SELECT * FROM products";
+
+        Cursor puntero = mDb.rawQuery(getProducts, null);
+        Log.v("ERROR","LLEGOOOOOOOOOOOOOOOOO");
+        if (puntero.moveToFirst()) {
+            do {
+                productos.add(puntero.getString(1));
+            } while (puntero.moveToNext());
+        }
+
+        puntero.close();
+
+        ArrayAdapter<String> productAdapter = new ArrayAdapter<>(mCtx,
+                android.R.layout.simple_spinner_item, productos);
+
+        productAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        addProduct.setAdapter(productAdapter);
+
+        return productAdapter;
     }
 }

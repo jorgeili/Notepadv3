@@ -21,11 +21,27 @@
         </activity>
         <activity
             android:name="es.unizar.eina.products.Productos.Productos.ProductEdit"
-            android:label="@string/title_activity_note_edit"
+            android:label="@string/title_activity_product_edit"
             android:parentActivityName="es.unizar.eina.products.Productos.Productos.Products" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="es.unizar.eina.products.Productos.Productos.Products" />
+        </activity>
+        <activity
+            android:name="es.unizar.eina.products.Productos.ListaProductos.ShoppingListEdit"
+            android:label="@string/title_activity_shoppingList_edit"
+            android:parentActivityName="es.unizar.eina.products.Productos.ListaProductos.ShoppingList" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="es.unizar.eina.products.Productos.ListaProductos.ShoppingList" />
+        </activity>
+        <activity
+            android:name="es.unizar.eina.products.Productos.ListaProductos.AddProductList"
+            android:label="@string/title_activity_add_product"
+            android:parentActivityName="es.unizar.eina.products.Productos.ListaProductos.ShoppingListEdit" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="es.unizar.eina.products.Productos.ListaProductos.ShoppingListEdit" />
         </activity>
     </application>
 

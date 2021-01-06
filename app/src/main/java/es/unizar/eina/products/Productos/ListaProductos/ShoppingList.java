@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-import es.unizar.eina.products.Productos.Productos.ProductEdit;
 import es.unizar.eina.products.Productos.Productos.ProductsDbAdapter;
 import es.unizar.eina.products.R;
 
@@ -23,7 +22,6 @@ public class ShoppingList extends AppCompatActivity {
     private static final int ACTIVITY_EDIT=1;
 
     private static final int INSERT_ID = Menu.FIRST;
-    private static final int DELETE_ID = Menu.FIRST + 1;
     private static final int EDIT_ID = Menu.FIRST + 2;
     private static final int ORDER_NAME = Menu.FIRST + 3;
     private static final int ORDER_PRICE= Menu.FIRST + 4;
@@ -69,10 +67,10 @@ public class ShoppingList extends AppCompatActivity {
             startManagingCursor(mShoppingListsCursor);
         }
         // Create an array to specify the fields we want to display in the list (only TITLE)
-        String[] from = new String[] { ProductsDbAdapter.KEY_TITLE_SL};
+        String[] from = new String[] { ProductsDbAdapter.KEY_TITLE_SL,ProductsDbAdapter.KEY_WEIGHT_SL,ProductsDbAdapter.KEY_PRICE_SL};
 
         // and an array of the fields we want to bind those fields to (in this case just nameProd)
-        int[] to = new int[] { R.id.nameSL};
+        int[] to = new int[] { R.id.nameProd, R.id.weightProd, R.id.priceProd};
 
         // Now create an array adapter and set it to display using our row
         SimpleCursorAdapter shoppingLists =
@@ -114,20 +112,14 @@ public class ShoppingList extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(Menu.NONE, DELETE_ID, Menu.NONE, R.string.menu_delete_sl);
         menu.add(Menu.NONE, EDIT_ID, Menu.NONE, R.string.edit_product_sl);
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case DELETE_ID:
-                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                mDbHelper.deleteShoppingList(info.id);
-                fillData(0);
-                return true;
             case EDIT_ID:
-                info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
                 editShoppingList(info.position, info.id);
                 return true;
         }
@@ -135,7 +127,7 @@ public class ShoppingList extends AppCompatActivity {
     }
 
     private void createShoppingList() {
-        Intent i = new Intent(this, ProductEdit.class);
+        Intent i = new Intent(this, ShoppingListEdit.class);
         startActivityForResult(i, ACTIVITY_CREATE);
     }
 
@@ -143,7 +135,7 @@ public class ShoppingList extends AppCompatActivity {
     protected void editShoppingList(int position, long id) {
         Cursor c = mShoppingListsCursor;
         c.moveToPosition(position);
-        Intent i = new Intent(this, ProductEdit.class);
+        Intent i = new Intent(this, ShoppingListEdit.class);
         i.putExtra(ProductsDbAdapter.KEY_ROWID_SL, id);
         i.putExtra(ProductsDbAdapter.KEY_TITLE_SL, c.getString(
                 c.getColumnIndexOrThrow(ProductsDbAdapter.KEY_TITLE_SL)));
@@ -151,36 +143,36 @@ public class ShoppingList extends AppCompatActivity {
                 c.getColumnIndexOrThrow(ProductsDbAdapter.KEY_WEIGHT_SL)));
         i.putExtra(ProductsDbAdapter.KEY_PRICE_SL, c.getDouble(
                 c.getColumnIndexOrThrow(ProductsDbAdapter.KEY_PRICE_SL)));
-        i.putExtra(ProductsDbAdapter.KEY_BODY_SL, c.getString(
-                c.getColumnIndexOrThrow(ProductsDbAdapter.KEY_BODY_SL)));
         startActivityForResult(i, ACTIVITY_EDIT);
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        String eliminado = "ELIMINADO";
         super.onActivityResult(requestCode, resultCode, intent);
-        Bundle extras = intent.getExtras();
-        switch(requestCode) {
-            case ACTIVITY_CREATE:
-                String title = extras.getString(ProductsDbAdapter.KEY_TITLE_SL);
-                Double weight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT_SL);
-                Double price = extras.getDouble(ProductsDbAdapter.KEY_PRICE_SL);
-                String body = extras.getString(ProductsDbAdapter.KEY_BODY_SL);
-                mDbHelper.createShoppingList(title, weight, price, body);
-                fillData(0);
-                break;
-            case ACTIVITY_EDIT:
-                Long rowId = extras.getLong(ProductsDbAdapter.KEY_ROWID_SL);
-                if (rowId != null) {
-                    String editTitle = extras.getString(ProductsDbAdapter.KEY_TITLE_SL);
-                    Double editWeight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT_SL);
-                    Double editPrice = extras.getDouble(ProductsDbAdapter.KEY_PRICE_SL);
-                    String editBody = extras.getString(ProductsDbAdapter.KEY_BODY_SL);
-                    mDbHelper.updateShoppingList(rowId, editTitle, editWeight, editPrice, editBody);
-                }
-                fillData(0);
-                break;
+        String value = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (value != eliminado) {
+            Bundle extras = intent.getExtras();
+            switch (requestCode) {
+                case ACTIVITY_CREATE:
+                    String title = extras.getString(ProductsDbAdapter.KEY_TITLE_SL);
+                    Double weight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT_SL);
+                    Double price = extras.getDouble(ProductsDbAdapter.KEY_PRICE_SL);
+                    mDbHelper.createShoppingList(title, weight, price);
+                    fillData(0);
+                    break;
+                case ACTIVITY_EDIT:
+                    Long rowId = extras.getLong(ProductsDbAdapter.KEY_ROWID_SL);
+                    if (rowId != null) {
+                        String editTitle = extras.getString(ProductsDbAdapter.KEY_TITLE_SL);
+                        Double editWeight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT_SL);
+                        Double editPrice = extras.getDouble(ProductsDbAdapter.KEY_PRICE_SL);
+                        mDbHelper.updateShoppingList(rowId, editTitle, editWeight, editPrice);
+                    }
+                    fillData(0);
+                    break;
+            }
         }
     }
 

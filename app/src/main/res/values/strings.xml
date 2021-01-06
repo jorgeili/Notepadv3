@@ -13,6 +13,7 @@
     <string name="menu_delete">Borrar producto</string>
     <string name="menu_delete_sl">Borrar lista de compra</string>
     <string name="edit_product">Editar producto</string>
+    <string name="add_product">Añadir a la lista</string>
     <string name="edit_product_sl">Editar lista de compra</string>
     <string name="edit_list">Lista</string>
     <string name="delete">Eliminar</string>
@@ -23,5 +24,7 @@
     <string name="kg">kg</string>
     <string name="euro">€</string>
     <string name="confirm">Aceptar</string>
-    <string name="title_activity_note_edit">Editar producto</string>
+    <string name="title_activity_product_edit">Editar producto</string>
+    <string name="title_activity_shoppingList_edit">Editar lista de compra</string>
+    <string name="title_activity_add_product">Añadir producto a la lista</string>
 </resources>

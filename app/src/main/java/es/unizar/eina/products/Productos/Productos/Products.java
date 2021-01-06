@@ -22,7 +22,6 @@ public class Products extends AppCompatActivity {
     private static final int ACTIVITY_EDIT=1;
 
     private static final int INSERT_ID = Menu.FIRST;
-    private static final int DELETE_ID = Menu.FIRST + 1;
     private static final int EDIT_ID = Menu.FIRST + 2;
     private static final int ORDER_NAME = Menu.FIRST + 3;
     private static final int ORDER_PRICE= Menu.FIRST + 4;
@@ -31,7 +30,7 @@ public class Products extends AppCompatActivity {
 
 
     private ProductsDbAdapter mDbHelper;
-    private Cursor mNotesCursor;
+    private Cursor mProductsCursor;
     private ListView mList;
 
 
@@ -54,30 +53,30 @@ public class Products extends AppCompatActivity {
     private void fillData(int orderCriteria) {
         if(orderCriteria == 0) {
             // Get all of the notes from the database and create the item list
-            mNotesCursor = mDbHelper.fetchAllProducts();
-            startManagingCursor(mNotesCursor);
+            mProductsCursor = mDbHelper.fetchAllProducts();
+            startManagingCursor(mProductsCursor);
         } else if (orderCriteria == 1) {
             // Get all of the notes ordered by name from the database and create the item list
-            mNotesCursor = mDbHelper.fetchAllProductsByName();
-            startManagingCursor(mNotesCursor);
+            mProductsCursor = mDbHelper.fetchAllProductsByName();
+            startManagingCursor(mProductsCursor);
         }else if (orderCriteria == 2) {
             // Get all of the notes ordered by price from the database and create the item list
-            mNotesCursor = mDbHelper.fetchAllProductsByPrice();
-            startManagingCursor(mNotesCursor);
+            mProductsCursor = mDbHelper.fetchAllProductsByPrice();
+            startManagingCursor(mProductsCursor);
         }else if (orderCriteria == 3) {
             // Get all of the notes ordered by weight from the database and create the item list
-            mNotesCursor = mDbHelper.fetchAllProductsByWeight();
-            startManagingCursor(mNotesCursor);
+            mProductsCursor = mDbHelper.fetchAllProductsByWeight();
+            startManagingCursor(mProductsCursor);
         }
-        // Create an array to specify the fields we want to display in the list (only TITLE)
-        String[] from = new String[] { ProductsDbAdapter.KEY_TITLE };
+        // Create an array to specify the fields we want to display in the list
+        String[] from = new String[] { ProductsDbAdapter.KEY_TITLE ,ProductsDbAdapter.KEY_WEIGHT,ProductsDbAdapter.KEY_PRICE };
 
         // and an array of the fields we want to bind those fields to (in this case just nameProd)
-        int[] to = new int[] { R.id.nameProd };
+        int[] to = new int[] { R.id.nameProd, R.id.weightProd, R.id.priceProd};
 
         // Now create an array adapter and set it to display using our row
         SimpleCursorAdapter products =
-                new SimpleCursorAdapter(this, R.layout.row, mNotesCursor, from, to);
+                new SimpleCursorAdapter(this, R.layout.row, mProductsCursor, from, to);
         mList.setAdapter(products);
     }
 
@@ -120,20 +119,14 @@ public class Products extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(Menu.NONE, DELETE_ID, Menu.NONE, R.string.menu_delete);
         menu.add(Menu.NONE, EDIT_ID, Menu.NONE, R.string.edit_product);
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case DELETE_ID:
-                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                mDbHelper.deleteProduct(info.id);
-                fillData(0);
-                return true;
             case EDIT_ID:
-                info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
                 editProduct(info.position, info.id);
                 return true;
         }
@@ -147,7 +140,7 @@ public class Products extends AppCompatActivity {
 
 
     protected void editProduct(int position, long id) {
-        Cursor c = mNotesCursor;
+        Cursor c = mProductsCursor;
         c.moveToPosition(position);
         Intent i = new Intent(this, ProductEdit.class);
         i.putExtra(ProductsDbAdapter.KEY_ROWID, id);
@@ -165,28 +158,32 @@ public class Products extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        String eliminado = "ELIMINADO";
         super.onActivityResult(requestCode, resultCode, intent);
-        Bundle extras = intent.getExtras();
-        switch(requestCode) {
-            case ACTIVITY_CREATE:
-                String title = extras.getString(ProductsDbAdapter.KEY_TITLE);
-                Double weight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT);
-                Double price = extras.getDouble(ProductsDbAdapter.KEY_PRICE);
-                String body = extras.getString(ProductsDbAdapter.KEY_BODY);
-                mDbHelper.createProduct(title, weight, price, body);
-                fillData(0);
-                break;
-            case ACTIVITY_EDIT:
-                Long rowId = extras.getLong(ProductsDbAdapter.KEY_ROWID);
-                if (rowId != null) {
-                    String editTitle = extras.getString(ProductsDbAdapter.KEY_TITLE);
-                    Double editWeight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT);
-                    Double editPrice = extras.getDouble(ProductsDbAdapter.KEY_PRICE);
-                    String editBody = extras.getString(ProductsDbAdapter.KEY_BODY);
-                    mDbHelper.updateProduct(rowId, editTitle, editWeight, editPrice, editBody);
-                }
-                fillData(0);
-                break;
+        String value = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (value != eliminado) {
+            Bundle extras = intent.getExtras();
+            switch (requestCode) {
+                case ACTIVITY_CREATE:
+                    String title = extras.getString(ProductsDbAdapter.KEY_TITLE);
+                    Double weight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT);
+                    Double price = extras.getDouble(ProductsDbAdapter.KEY_PRICE);
+                    String body = extras.getString(ProductsDbAdapter.KEY_BODY);
+                    mDbHelper.createProduct(title, weight, price, body);
+                    fillData(0);
+                    break;
+                case ACTIVITY_EDIT:
+                    Long rowId = extras.getLong(ProductsDbAdapter.KEY_ROWID);
+                    if (rowId != null) {
+                        String editTitle = extras.getString(ProductsDbAdapter.KEY_TITLE);
+                        Double editWeight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT);
+                        Double editPrice = extras.getDouble(ProductsDbAdapter.KEY_PRICE);
+                        String editBody = extras.getString(ProductsDbAdapter.KEY_BODY);
+                        mDbHelper.updateProduct(rowId, editTitle, editWeight, editPrice, editBody);
+                    }
+                    fillData(0);
+                    break;
+            }
         }
     }
 
