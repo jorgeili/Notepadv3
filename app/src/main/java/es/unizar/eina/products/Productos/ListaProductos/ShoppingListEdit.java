@@ -1,20 +1,26 @@
 package es.unizar.eina.products.Productos.ListaProductos;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.SimpleCursorAdapter;
 
 import es.unizar.eina.products.Productos.Productos.ProductsDbAdapter;
 import es.unizar.eina.products.R;
 
 public class ShoppingListEdit extends AppCompatActivity {
 
+    private Cursor mProductsCursor;
+
     private EditText mTitleText;
     private EditText mWeightText;
     private EditText mPriceText;
+    private ListView mListProd;
     private Long mRowId;
     private ProductsDbAdapter mDbHelper;
     public String SL_title;
@@ -27,6 +33,7 @@ public class ShoppingListEdit extends AppCompatActivity {
         mTitleText = (EditText) findViewById(R.id.nameSL);
         mWeightText = (EditText) findViewById(R.id.title_weight);
         mPriceText = (EditText) findViewById(R.id.title_price);
+        mListProd = (ListView) findViewById(R.id.products_in_list);
 
         mDbHelper = new ProductsDbAdapter(this);
         mDbHelper.open();
@@ -43,6 +50,7 @@ public class ShoppingListEdit extends AppCompatActivity {
             Double weight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT_SL,0);
             Double price = extras.getDouble(ProductsDbAdapter.KEY_PRICE_SL,0);
             mRowId = extras.getLong(ProductsDbAdapter.KEY_ROWID_SL);
+            fillData();
 
             if (title != null) {
                 mTitleText.setText(title);
@@ -94,6 +102,23 @@ public class ShoppingListEdit extends AppCompatActivity {
             }
 
         });
+    }
+
+    private void fillData() {
+        // Get all of the notes from the database and create the item list
+        mProductsCursor = mDbHelper.fetchAllProducts();
+        startManagingCursor(mProductsCursor);
+
+        // Create an array to specify the fields we want to display in the list (only TITLE)
+        String[] from = new String[] { ProductsDbAdapter.KEY_TITLE };
+
+        // and an array of the fields we want to bind those fields to (in this case just nameProd)
+        int[] to = new int[] { R.id.nameProd };
+
+        // Now create an array adapter and set it to display using our row
+        SimpleCursorAdapter products =
+                new SimpleCursorAdapter(this, R.layout.product_in_list, mProductsCursor, from, to);
+        mListProd.setAdapter(products);
     }
 
     public void openAddProductActivity() {

@@ -328,25 +328,17 @@ public class ProductsDbAdapter {
      * Function to load the spinner of Products data from SQLite database
      * */
     public ArrayAdapter<String> loadProducts(Spinner addProduct) {
-        Log.v("ERROR","LLEGOOOOOOOOOOOOOOOOO");
-
         List<String> productos = new ArrayList<>();
-        Log.v("ERROR","LLEGOOOOOOOOOOOOOOOOO");
-
-        String getProducts = "SELECT * FROM products";
-
-        Cursor puntero = mDb.rawQuery(getProducts, null);
-        Log.v("ERROR","LLEGOOOOOOOOOOOOOOOOO");
-        if (puntero.moveToFirst()) {
+        String getProducts = "SELECT title, weight, price FROM products";
+        Cursor pointer = mDb.rawQuery(getProducts, null);
+        Log.v("spinner","Productos recolectados " + pointer.getCount());
+        if (pointer.moveToFirst()) {
             do {
-                productos.add(puntero.getString(1));
-            } while (puntero.moveToNext());
+                productos.add(pointer.getString(1));
+            } while (pointer.moveToNext());
         }
-
-        puntero.close();
-
-        ArrayAdapter<String> productAdapter = new ArrayAdapter<>(mCtx,
-                android.R.layout.simple_spinner_item, productos);
+        pointer.close();
+        ArrayAdapter<String> productAdapter = new ArrayAdapter<>(mCtx, android.R.layout.simple_spinner_item, productos);
 
         productAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
