@@ -32,7 +32,9 @@ public class ShoppingListEdit extends AppCompatActivity {
 
         mTitleText = (EditText) findViewById(R.id.nameSL);
         mWeightText = (EditText) findViewById(R.id.title_weight);
+        mWeightText.setEnabled(false);
         mPriceText = (EditText) findViewById(R.id.title_price);
+        mPriceText.setEnabled(false);
         mListProd = (ListView) findViewById(R.id.products_in_list);
 
         mDbHelper = new ProductsDbAdapter(this);
@@ -50,7 +52,6 @@ public class ShoppingListEdit extends AppCompatActivity {
             Double weight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT_SL,0);
             Double price = extras.getDouble(ProductsDbAdapter.KEY_PRICE_SL,0);
             mRowId = extras.getLong(ProductsDbAdapter.KEY_ROWID_SL);
-            fillData();
 
             if (title != null) {
                 mTitleText.setText(title);
@@ -61,6 +62,7 @@ public class ShoppingListEdit extends AppCompatActivity {
             if (price != null) {
                 mPriceText.setText(Double.toString(price));
             }
+            fillData();
         }
         addProduct.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,8 +77,8 @@ public class ShoppingListEdit extends AppCompatActivity {
                 Bundle bundle = new Bundle();
 
                 bundle.putString(ProductsDbAdapter.KEY_TITLE_SL, mTitleText.getText().toString());
-                bundle.putDouble(ProductsDbAdapter.KEY_WEIGHT_SL, Double.parseDouble(mWeightText.getText().toString()));
-                bundle.putDouble(ProductsDbAdapter.KEY_PRICE_SL, Double.parseDouble(mPriceText.getText().toString()));
+                bundle.putDouble(ProductsDbAdapter.KEY_WEIGHT_SL, 0.0);
+                bundle.putDouble(ProductsDbAdapter.KEY_PRICE_SL, 0.0);
 
                 if (mRowId != null) {
                     bundle.putLong(ProductsDbAdapter.KEY_ROWID_SL, mRowId);
@@ -109,11 +111,28 @@ public class ShoppingListEdit extends AppCompatActivity {
         mProductsCursor = mDbHelper.fetchAllProducts();
         startManagingCursor(mProductsCursor);
 
+        // Create an array to specify the fields we want to display in the list
+        String[] from = new String[] { ProductsDbAdapter.KEY_TITLE, ProductsDbAdapter.KEY_WEIGHT, ProductsDbAdapter.KEY_PRICE };
+
+        // and an array of the fields we want to bind those fields to
+        int[] to = new int[] { R.id.nameProd, R.id.weightProd, R.id.priceProd };
+
+        // Now create an array adapter and set it to display using our row
+        SimpleCursorAdapter products =
+                new SimpleCursorAdapter(this, R.layout.product_in_list, mProductsCursor, from, to);
+        mListProd.setAdapter(products);
+    }
+
+    private void fillWeightPrice() {
+        // Get all of the notes from the database and create the item list
+        mProductsCursor = mDbHelper.fetchWeight();
+        startManagingCursor(mProductsCursor);
+
         // Create an array to specify the fields we want to display in the list (only TITLE)
-        String[] from = new String[] { ProductsDbAdapter.KEY_TITLE };
+        String[] from = new String[] { ProductsDbAdapter.KEY_WEIGHT, ProductsDbAdapter.KEY_PRICE };
 
         // and an array of the fields we want to bind those fields to (in this case just nameProd)
-        int[] to = new int[] { R.id.nameProd };
+        int[] to = new int[] { R.id.weightProd, R.id.priceProd };
 
         // Now create an array adapter and set it to display using our row
         SimpleCursorAdapter products =

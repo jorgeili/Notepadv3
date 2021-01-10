@@ -218,7 +218,7 @@ public class ProductsDbAdapter {
     }
 
     /**
-     * Return a Cursor over the list of all shopping lists  in the database
+     * Return a Cursor over the list of all products in the database
      *
      * @return Cursor over all products
      */
@@ -226,6 +226,16 @@ public class ProductsDbAdapter {
 
         return mDb.query(DATABASE_TABLE_P, new String[] {KEY_ROWID, KEY_TITLE, KEY_WEIGHT, KEY_PRICE,
                 KEY_BODY}, null, null, null, null, null);
+    }
+
+    /**
+     * Return a Cursor over sum of the total weight in the database
+     *
+     * @return Cursor over all products
+     */
+    public Cursor fetchWeight() {
+        return mDb.query(DATABASE_TABLE_P, new String[] {KEY_WEIGHT, KEY_PRICE}, null,
+                null, null, null, null);
     }
 
     /**

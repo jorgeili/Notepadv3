@@ -99,8 +99,11 @@
         android:layout_margin="30dp">
 
         <ListView android:id="@+id/products_in_list"
+            android:padding="0dp"
             android:layout_width="match_parent"
-            android:layout_height="300dp"/>
+            android:layout_height="300dp"
+            android:divider="@drawable/border"
+            android:dividerHeight="3dp"/>
         <Button
             android:id="@+id/button_add"
             android:layout_width="match_parent"

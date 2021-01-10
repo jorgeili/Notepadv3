@@ -51,10 +51,10 @@ public class AddProductList extends AppCompatActivity {
         startManagingCursor(mProductsCursor);
 
         // Create an array to specify the fields we want to display in the list (only TITLE)
-        String[] from = new String[] { ProductsDbAdapter.KEY_TITLE };
+        String[] from = new String[] { ProductsDbAdapter.KEY_TITLE, ProductsDbAdapter.KEY_WEIGHT, ProductsDbAdapter.KEY_PRICE };
 
         // and an array of the fields we want to bind those fields to (in this case just nameProd)
-        int[] to = new int[] { R.id.nameProd };
+        int[] to = new int[] { R.id.nameProd, R.id.weightProd, R.id.priceProd };
 
         // Now create an array adapter and set it to display using our row
         SimpleCursorAdapter products =
