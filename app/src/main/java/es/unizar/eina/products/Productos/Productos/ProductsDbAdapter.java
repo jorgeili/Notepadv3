@@ -36,6 +36,9 @@ public class ProductsDbAdapter {
     public static final String KEY_WEIGHT_SL = "weight";
     public static final String KEY_PRICE_SL = "price";
 
+    public static final String KEY_ROWID_SL_ADD = "_idSL";
+    public static final String KEY_ROWID_P_ADD = "_idP";
+
     private static final String TAG = "ProductsDbAdapter";
     private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
@@ -51,10 +54,15 @@ public class ProductsDbAdapter {
             "create table shoppingLists (_id integer primary key autoincrement, "
                     + "title text not null, weight double not null, price double not null);";
 
+    private static final String DATABASE_CREATE_ADD_PRODUCT =
+            "create table shoppingListsProducts ( _idSL integer, _idP integer, primary key(_idSL, _idP));";
+
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE_P = "products";
     private static final String DATABASE_TABLE_SL = "shoppingLists";
-    private static final int DATABASE_VERSION = 5;
+    private static final String DATABASE_TABLE_ADD_PRODUCT = "shoppingListsProducts";
+
+    private static final int DATABASE_VERSION = 20;
 
     private final Context mCtx;
 
@@ -69,6 +77,7 @@ public class ProductsDbAdapter {
 
             db.execSQL(DATABASE_CREATE_P);
             db.execSQL(DATABASE_CREATE_SL);
+            db.execSQL(DATABASE_CREATE_ADD_PRODUCT);
         }
 
         @Override
@@ -77,6 +86,7 @@ public class ProductsDbAdapter {
                     + newVersion + ", which will destroy all old data");
             db.execSQL("DROP TABLE IF EXISTS "+DATABASE_TABLE_P);
             db.execSQL("DROP TABLE IF EXISTS "+DATABASE_TABLE_SL);
+            db.execSQL("DROP TABLE IF EXISTS "+DATABASE_TABLE_ADD_PRODUCT);
             onCreate(db);
         }
     }
@@ -130,6 +140,39 @@ public class ProductsDbAdapter {
         initialValues.put(KEY_BODY, body);
 
         return mDb.insert(DATABASE_TABLE_P, null, initialValues);
+    }
+
+    public long insertProductOnSL(long idSL, long idP) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(KEY_ROWID_SL_ADD, idSL);
+        initialValues.put(KEY_ROWID_P_ADD, idP);
+
+        return mDb.insert(DATABASE_TABLE_ADD_PRODUCT, null, initialValues);
+    }
+
+    /**
+     * Return a Cursor over the list of all products in the database
+     *
+     * @return Cursor over all products
+     */
+    public Cursor fetchAllSLProducts() {
+
+        Cursor mShoppingListsCursor=  mDb.query(DATABASE_TABLE_ADD_PRODUCT, new String[] { KEY_ROWID_P_ADD
+                }, KEY_ROWID_SL_ADD, null, null, null, null);
+
+        String producto = "";
+        if (mShoppingListsCursor.moveToFirst()) {
+            do {
+                producto = mShoppingListsCursor.getString(0);
+            } while (mShoppingListsCursor.moveToNext());
+        }
+
+        String selectQuery = "SELECT * FROM products WHERE _id = '"+producto+"'";
+        Cursor finalCursor = mDb.rawQuery(selectQuery, null);
+
+        mShoppingListsCursor.close();
+
+        return finalCursor;
     }
 
     /**

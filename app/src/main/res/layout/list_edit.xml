@@ -101,7 +101,7 @@
         <ListView android:id="@+id/products_in_list"
             android:padding="0dp"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="200dp"
             android:divider="@drawable/border"
             android:dividerHeight="3dp"/>
         <Button

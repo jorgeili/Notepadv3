@@ -23,7 +23,10 @@ public class ShoppingListEdit extends AppCompatActivity {
     private ListView mListProd;
     private Long mRowId;
     private ProductsDbAdapter mDbHelper;
-    public String SL_title;
+    public String SL_rowid;
+
+    private static final int ACTIVITY_ADD_PRODUCT=1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,11 +51,10 @@ public class ShoppingListEdit extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String title = extras.getString(ProductsDbAdapter.KEY_TITLE_SL);
-            SL_title = title;
             Double weight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT_SL,0);
             Double price = extras.getDouble(ProductsDbAdapter.KEY_PRICE_SL,0);
             mRowId = extras.getLong(ProductsDbAdapter.KEY_ROWID_SL);
-
+            SL_rowid = mRowId.toString();
             if (title != null) {
                 mTitleText.setText(title);
             }
@@ -67,6 +69,7 @@ public class ShoppingListEdit extends AppCompatActivity {
         addProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 openAddProductActivity();
             }
         });
@@ -108,7 +111,7 @@ public class ShoppingListEdit extends AppCompatActivity {
 
     private void fillData() {
         // Get all of the notes from the database and create the item list
-        mProductsCursor = mDbHelper.fetchAllProducts();
+        mProductsCursor = mDbHelper.fetchAllSLProducts();
         startManagingCursor(mProductsCursor);
 
         // Create an array to specify the fields we want to display in the list
@@ -142,8 +145,19 @@ public class ShoppingListEdit extends AppCompatActivity {
 
     public void openAddProductActivity() {
         Intent intentsl = new Intent(this, AddProductList.class);
-        intentsl.putExtra(Intent.EXTRA_TEXT,SL_title);
-        startActivity(intentsl);
+        intentsl.putExtra(Intent.EXTRA_TEXT,SL_rowid);
+        startActivityForResult(intentsl, ACTIVITY_ADD_PRODUCT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        Bundle extras = intent.getExtras();
+        switch (requestCode) {
+            case ACTIVITY_ADD_PRODUCT:
+
+                break;
+        }
     }
 
     /*

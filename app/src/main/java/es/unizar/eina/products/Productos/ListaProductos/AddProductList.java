@@ -25,7 +25,7 @@ public class AddProductList extends AppCompatActivity {
     private ProductsDbAdapter mDbHelper;
     private Cursor mProductsCursor;
     private ListView mList;
-
+    private String value;
 
     /** Called when the activity is first created. */
     @Override
@@ -33,8 +33,7 @@ public class AddProductList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_product);
         Intent intent = getIntent();
-        String value = intent.getStringExtra(Intent.EXTRA_TEXT);
-        Log.v("VALUEEEEEEEEEE",value);
+        value = intent.getStringExtra(Intent.EXTRA_TEXT);
 
         mDbHelper = new ProductsDbAdapter(this);
         mDbHelper.open();
@@ -74,6 +73,8 @@ public class AddProductList extends AppCompatActivity {
     public boolean onContextItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case ADD_ID:
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                mDbHelper.insertProductOnSL(Long.parseLong(value), info.id);
                 return true;
         }
         return super.onContextItemSelected(item);
