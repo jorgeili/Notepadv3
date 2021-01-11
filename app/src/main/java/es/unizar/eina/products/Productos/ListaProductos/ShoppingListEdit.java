@@ -144,6 +144,7 @@ public class ShoppingListEdit extends AppCompatActivity {
     }
 
     public void openAddProductActivity() {
+        // AQUI HAY QUE GUARDAR EL NOMBRE EN LA BD
         Intent intentsl = new Intent(this, AddProductList.class);
         intentsl.putExtra(Intent.EXTRA_TEXT,SL_rowid);
         startActivityForResult(intentsl, ACTIVITY_ADD_PRODUCT);
