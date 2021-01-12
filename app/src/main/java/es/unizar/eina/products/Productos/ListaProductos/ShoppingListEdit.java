@@ -48,6 +48,7 @@ public class ShoppingListEdit extends AppCompatActivity {
         Button confirmButton = (Button) findViewById(R.id.confirm_list);
 
         mRowId = null;
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String title = extras.getString(ProductsDbAdapter.KEY_TITLE_SL);
@@ -104,6 +105,7 @@ public class ShoppingListEdit extends AppCompatActivity {
                 intent.putExtra(Intent.EXTRA_TEXT,"ELIMINADO");
                 setResult(RESULT_OK, intent);
                 finish();
+                fillData(SL_rowid);
             }
 
         });
@@ -111,6 +113,7 @@ public class ShoppingListEdit extends AppCompatActivity {
 
     private void fillData(String SL_rowid) {
         // Get all of the notes from the database and create the item list
+        double total_weight = 0.0, total_price = 0.0;
         mProductsCursor = mDbHelper.fetchAllSLProducts(SL_rowid);
         startManagingCursor(mProductsCursor);
 
@@ -126,9 +129,9 @@ public class ShoppingListEdit extends AppCompatActivity {
         mListProd.setAdapter(products);
     }
 
-    private void fillWeightPrice() {
+    private void fillWeightPrice(String SL_rowid) {
         // Get all of the notes from the database and create the item list
-        mProductsCursor = mDbHelper.fetchWeight();
+        mProductsCursor = mDbHelper.fetchWeight(SL_rowid);
         startManagingCursor(mProductsCursor);
 
         // Create an array to specify the fields we want to display in the list (only TITLE)

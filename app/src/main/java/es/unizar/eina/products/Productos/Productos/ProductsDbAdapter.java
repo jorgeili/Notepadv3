@@ -40,6 +40,9 @@ public class ProductsDbAdapter {
     public static final String KEY_ROWID_P_ADD = "_idP";
     public static final String KEY_QUANTITY = "quantity";
 
+    public static final String KEY_TOTAL_WEIGHT = "total_weight";
+
+
 
     private static final String TAG = "ProductsDbAdapter";
     private DatabaseHelper mDbHelper;
@@ -160,13 +163,16 @@ public class ProductsDbAdapter {
     public Cursor fetchAllSLProducts(String rowid_SL) {
 
 
-        Cursor mShoppingListsCursor=  mDb.query(DATABASE_TABLE_ADD_PRODUCT, new String[] { KEY_ROWID_P_ADD
-                }, KEY_ROWID_SL_ADD, null, null, null, null);
+        Cursor mShoppingListsCursor=  mDb.query(DATABASE_TABLE_ADD_PRODUCT, new String[] {KEY_ROWID_P_ADD},
+                KEY_ROWID_SL_ADD, null, null, null, null);
 
         String producto = "";
         boolean first = true;
-        String selectQuery = "SELECT _id, title, weight, price, quantity FROM (SELECT * FROM products";
-        selectQuery += " INNER JOIN shoppingListsProducts ON products._id =  shoppingListsProducts._idP ) WHERE _idSL = '" + rowid_SL +"'";
+        String selectQuery = "SELECT _id, title, weight, price, quantity" +
+                " FROM (" +
+                "   SELECT * FROM products INNER JOIN shoppingListsProducts ON products._id =  shoppingListsProducts._idP " +
+                ") " +
+                "WHERE _idSL = '" + rowid_SL +"'";
         if (mShoppingListsCursor.moveToFirst()) {
             do {
                 producto = mShoppingListsCursor.getString(0);
@@ -289,7 +295,15 @@ public class ProductsDbAdapter {
      *
      * @return Cursor over all products
      */
-    public Cursor fetchWeight() {
+    public Cursor fetchWeight(String rowid_SL) {
+        String producto = "";
+        boolean first = true;
+        String selectQuery = "SELECT sum(weight*quantity) as weight, sum(price*quantity) as price" +
+                " FROM (" +
+                "   SELECT * FROM products INNER JOIN shoppingListsProducts ON products._id =  shoppingListsProducts._idP " +
+                ") " +
+                "WHERE _idSL = '" + rowid_SL +"'";
+
         return mDb.query(DATABASE_TABLE_P, new String[] {KEY_WEIGHT, KEY_PRICE}, null,
                 null, null, null, null);
     }
