@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-
+import android.database.DatabaseUtils;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +38,8 @@ public class ProductsDbAdapter {
 
     public static final String KEY_ROWID_SL_ADD = "_idSL";
     public static final String KEY_ROWID_P_ADD = "_idP";
+    public static final String KEY_QUANTITY = "quantity";
+
 
     private static final String TAG = "ProductsDbAdapter";
     private DatabaseHelper mDbHelper;
@@ -55,14 +57,14 @@ public class ProductsDbAdapter {
                     + "title text not null, weight double not null, price double not null);";
 
     private static final String DATABASE_CREATE_ADD_PRODUCT =
-            "create table shoppingListsProducts ( _idSL integer, _idP integer, primary key(_idSL, _idP));";
+            "create table shoppingListsProducts ( _idSL integer, _idP integer, quantity integer not null, primary key(_idSL, _idP));";
 
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE_P = "products";
     private static final String DATABASE_TABLE_SL = "shoppingLists";
     private static final String DATABASE_TABLE_ADD_PRODUCT = "shoppingListsProducts";
 
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 25;
 
     private final Context mCtx;
 
@@ -142,11 +144,11 @@ public class ProductsDbAdapter {
         return mDb.insert(DATABASE_TABLE_P, null, initialValues);
     }
 
-    public long insertProductOnSL(long idSL, long idP) {
+    public long insertProductOnSL(long idSL, long idP, int quantity) {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_ROWID_SL_ADD, idSL);
         initialValues.put(KEY_ROWID_P_ADD, idP);
-
+        initialValues.put(KEY_QUANTITY, quantity);
         return mDb.insert(DATABASE_TABLE_ADD_PRODUCT, null, initialValues);
     }
 
@@ -155,21 +157,32 @@ public class ProductsDbAdapter {
      *
      * @return Cursor over all products
      */
-    public Cursor fetchAllSLProducts() {
+    public Cursor fetchAllSLProducts(String rowid_SL) {
+
 
         Cursor mShoppingListsCursor=  mDb.query(DATABASE_TABLE_ADD_PRODUCT, new String[] { KEY_ROWID_P_ADD
                 }, KEY_ROWID_SL_ADD, null, null, null, null);
 
         String producto = "";
+        boolean first = true;
+        String selectQuery = "SELECT _id, title, weight, price, quantity FROM (SELECT * FROM products";
+        selectQuery += " INNER JOIN shoppingListsProducts ON products._id =  shoppingListsProducts._idP ) WHERE _idSL = '" + rowid_SL +"'";
         if (mShoppingListsCursor.moveToFirst()) {
             do {
                 producto = mShoppingListsCursor.getString(0);
+                if(first) {
+                    first = false;
+                    selectQuery += " AND ( _id = '" + producto+"'";
+                }else{
+                    selectQuery += " OR _id = '" + producto+"'";
+                }
             } while (mShoppingListsCursor.moveToNext());
+            selectQuery += " ) ";
         }
-
-        String selectQuery = "SELECT * FROM products WHERE _id = '"+producto+"'";
         Cursor finalCursor = mDb.rawQuery(selectQuery, null);
+        String resultado = DatabaseUtils.dumpCursorToString(finalCursor);
 
+        Log.d("VOLCADOOOO1:",resultado);
         mShoppingListsCursor.close();
 
         return finalCursor;

@@ -74,7 +74,7 @@ public class AddProductList extends AppCompatActivity {
         switch(item.getItemId()) {
             case ADD_ID:
                 AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                mDbHelper.insertProductOnSL(Long.parseLong(value), info.id);
+                mDbHelper.insertProductOnSL(Long.parseLong(value), info.id, 1);
                 return true;
         }
         return super.onContextItemSelected(item);

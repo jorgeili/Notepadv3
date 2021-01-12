@@ -45,7 +45,7 @@
             android:layout_marginStart="3dp"
             android:layout_marginLeft="3dp"/>
     </LinearLayout>
-    <EditText
+    <EditText android:id="@+id/quantityProd"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.1"

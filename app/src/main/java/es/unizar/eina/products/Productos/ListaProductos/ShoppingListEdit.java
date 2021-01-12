@@ -64,7 +64,7 @@ public class ShoppingListEdit extends AppCompatActivity {
             if (price != null) {
                 mPriceText.setText(Double.toString(price));
             }
-            fillData();
+            fillData(SL_rowid);
         }
         addProduct.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,16 +109,16 @@ public class ShoppingListEdit extends AppCompatActivity {
         });
     }
 
-    private void fillData() {
+    private void fillData(String SL_rowid) {
         // Get all of the notes from the database and create the item list
-        mProductsCursor = mDbHelper.fetchAllSLProducts();
+        mProductsCursor = mDbHelper.fetchAllSLProducts(SL_rowid);
         startManagingCursor(mProductsCursor);
 
         // Create an array to specify the fields we want to display in the list
-        String[] from = new String[] { ProductsDbAdapter.KEY_TITLE, ProductsDbAdapter.KEY_WEIGHT, ProductsDbAdapter.KEY_PRICE };
+        String[] from = new String[] { ProductsDbAdapter.KEY_TITLE, ProductsDbAdapter.KEY_WEIGHT, ProductsDbAdapter.KEY_PRICE, ProductsDbAdapter.KEY_QUANTITY};
 
         // and an array of the fields we want to bind those fields to
-        int[] to = new int[] { R.id.nameProd, R.id.weightProd, R.id.priceProd };
+        int[] to = new int[] { R.id.nameProd, R.id.weightProd, R.id.priceProd, R.id.quantityProd};
 
         // Now create an array adapter and set it to display using our row
         SimpleCursorAdapter products =
