@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
@@ -32,16 +33,32 @@ public class AddProductList extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_product);
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         value = intent.getStringExtra(Intent.EXTRA_TEXT);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
         mDbHelper = new ProductsDbAdapter(this);
         mDbHelper.open();
         mList = (ListView)findViewById(R.id.add_product_list);
+
+        Button confirmButton = (Button) findViewById(R.id.confirm_list);
+
         fillData();
 
         registerForContextMenu(mList);
 
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                //Bundle bundle = new Bundle();
+                Intent mIntent = new Intent();
+                //mIntent.putExtras(bundle);
+                setResult(RESULT_OK, mIntent);
+                finish();
+            }
+
+        });
     }
 
     private void fillData() {
@@ -60,6 +77,8 @@ public class AddProductList extends AppCompatActivity {
                 new SimpleCursorAdapter(this, R.layout.row, mProductsCursor, from, to);
         mList.setAdapter(products);
     }
+
+
 
 
     @Override

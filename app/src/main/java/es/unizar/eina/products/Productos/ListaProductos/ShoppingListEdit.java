@@ -69,7 +69,6 @@ public class ShoppingListEdit extends AppCompatActivity {
         addProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 openAddProductActivity();
             }
         });
@@ -92,6 +91,7 @@ public class ShoppingListEdit extends AppCompatActivity {
                 setResult(RESULT_OK, mIntent);
                 finish();
             }
+
 
         });
 
@@ -144,10 +144,10 @@ public class ShoppingListEdit extends AppCompatActivity {
     }
 
     public void openAddProductActivity() {
-        // AQUI HAY QUE GUARDAR EL NOMBRE EN LA BD
         Intent intentsl = new Intent(this, AddProductList.class);
         intentsl.putExtra(Intent.EXTRA_TEXT,SL_rowid);
         startActivityForResult(intentsl, ACTIVITY_ADD_PRODUCT);
+        fillData(SL_rowid);
     }
 
     @Override
