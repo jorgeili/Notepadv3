@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -128,6 +129,10 @@ public class ShoppingList extends AppCompatActivity {
 
     private void createShoppingList() {
         Intent i = new Intent(this, ShoppingListEdit.class);
+
+        Long id = mDbHelper.createShoppingList();
+
+        i.putExtra(ProductsDbAdapter.KEY_ROWID_SL, id);
         startActivityForResult(i, ACTIVITY_CREATE);
     }
 
@@ -154,25 +159,17 @@ public class ShoppingList extends AppCompatActivity {
         String value = intent.getStringExtra(Intent.EXTRA_TEXT);
         if (value != eliminado) {
             Bundle extras = intent.getExtras();
-            switch (requestCode) {
-                case ACTIVITY_CREATE:
-                    String title = extras.getString(ProductsDbAdapter.KEY_TITLE_SL);
-                    Double weight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT_SL);
-                    Double price = extras.getDouble(ProductsDbAdapter.KEY_PRICE_SL);
-                    mDbHelper.createShoppingList(title, weight, price);
-                    fillData(0);
-                    break;
-                case ACTIVITY_EDIT:
-                    Long rowId = extras.getLong(ProductsDbAdapter.KEY_ROWID_SL);
-                    if (rowId != null) {
-                        String editTitle = extras.getString(ProductsDbAdapter.KEY_TITLE_SL);
-                        Double editWeight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT_SL);
-                        Double editPrice = extras.getDouble(ProductsDbAdapter.KEY_PRICE_SL);
-                        mDbHelper.updateShoppingList(rowId, editTitle, editWeight, editPrice);
-                    }
-                    fillData(0);
-                    break;
+            Long rowId = extras.getLong(ProductsDbAdapter.KEY_ROWID_SL);
+            String editTitle = extras.getString(ProductsDbAdapter.KEY_TITLE_SL);
+            Double editWeight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT_SL);
+            Double editPrice = extras.getDouble(ProductsDbAdapter.KEY_PRICE_SL);
+
+            if (rowId != null) {
+                if (editTitle == "" || editTitle == null)
+                    editTitle = "Sin nombre";
+                mDbHelper.updateShoppingList(rowId, editTitle, editWeight, editPrice);
             }
+            fillData(0);
         }
     }
 

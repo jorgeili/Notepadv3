@@ -35,6 +35,7 @@ public class AddProductList extends AppCompatActivity {
         setContentView(R.layout.add_product);
         final Intent intent = getIntent();
         value = intent.getStringExtra(Intent.EXTRA_TEXT);
+        Log.v("idSL", "id: "+value);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 

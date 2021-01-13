@@ -152,6 +152,37 @@ public class ProductsDbAdapter {
         initialValues.put(KEY_ROWID_SL_ADD, idSL);
         initialValues.put(KEY_ROWID_P_ADD, idP);
         initialValues.put(KEY_QUANTITY, quantity);
+
+        ContentValues updateSL = new ContentValues();
+        String selectQuery = "SELECT weight, price FROM shoppingLists WHERE _id = '" + idSL +"'";
+        Cursor cursor = mDb.rawQuery(selectQuery, null);
+        String aux = "";
+        Double we_sl = 0.0, pr_sl = 0.0, we = 0.0, pr = 0.0;
+        if (cursor.moveToFirst()) {
+            aux = cursor.getString(cursor.getColumnIndex("weight"));
+            we_sl = Double.parseDouble(aux);
+            aux = cursor.getString(cursor.getColumnIndex("price"));
+            pr_sl = Double.parseDouble(aux);
+        }
+
+        selectQuery = "SELECT weight, price FROM products WHERE _id = '" + idP +"'";
+        cursor = mDb.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            aux = cursor.getString(cursor.getColumnIndex("weight"));
+            we = Double.parseDouble(aux);
+            aux = cursor.getString(cursor.getColumnIndex("price"));
+            pr = Double.parseDouble(aux);
+        }
+
+        ContentValues args = new ContentValues();
+        args.put(KEY_WEIGHT_SL, we_sl + we * quantity);
+        args.put(KEY_PRICE_SL, pr_sl + pr * quantity);
+        boolean up = mDb.update(DATABASE_TABLE_SL, args, KEY_ROWID_SL + "=" + idSL, null) >0;
+        Log.v("update", Boolean.toString(up));
+
+        cursor.close();
+
+        //String weight = resultado.split("=");
         return mDb.insert(DATABASE_TABLE_ADD_PRODUCT, null, initialValues);
     }
 
@@ -199,16 +230,13 @@ public class ProductsDbAdapter {
      * successfully created return the new rowId for that shopping list, otherwise return
      * a -1 to indicate failure.
      *
-     * @param title the title of the shopping list
-     * @param weight the weight of the shopping list
-     * @param price the price of the shopping list
      * @return rowId or -1 if failed
      */
-    public long createShoppingList(String title, Double weight, Double price) {
+    public long createShoppingList() {
         ContentValues initialValues = new ContentValues();
-        initialValues.put(KEY_TITLE_SL, title);
-        initialValues.put(KEY_WEIGHT_SL, weight);
-        initialValues.put(KEY_PRICE_SL, price);
+        initialValues.put(KEY_TITLE_SL, "Sin nombre");
+        initialValues.put(KEY_WEIGHT_SL, 0.0);
+        initialValues.put(KEY_PRICE_SL, 0.0);
 
         return mDb.insert(DATABASE_TABLE_SL, null, initialValues);
     }
