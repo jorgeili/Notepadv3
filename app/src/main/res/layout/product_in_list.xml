@@ -25,7 +25,7 @@
             android:textAlignment="textEnd"
             android:gravity="end" />
         <TextView
-            android:text="@string/euro"
+            android:text="@string/kg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.075"
@@ -38,7 +38,7 @@
             android:textAlignment="textEnd"
             android:gravity="end" />
         <TextView
-            android:text="@string/kg"
+            android:text="@string/euro"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0.075"

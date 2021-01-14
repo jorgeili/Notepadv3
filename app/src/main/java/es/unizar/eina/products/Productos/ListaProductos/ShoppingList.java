@@ -161,13 +161,11 @@ public class ShoppingList extends AppCompatActivity {
             Bundle extras = intent.getExtras();
             Long rowId = extras.getLong(ProductsDbAdapter.KEY_ROWID_SL);
             String editTitle = extras.getString(ProductsDbAdapter.KEY_TITLE_SL);
-            Double editWeight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT_SL);
-            Double editPrice = extras.getDouble(ProductsDbAdapter.KEY_PRICE_SL);
 
             if (rowId != null) {
                 if (editTitle == "" || editTitle == null)
                     editTitle = "Sin nombre";
-                mDbHelper.updateShoppingList(rowId, editTitle, editWeight, editPrice);
+                mDbHelper.updateShoppingList(rowId, editTitle);
             }
             fillData(0);
         }
