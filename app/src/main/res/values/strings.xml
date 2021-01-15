@@ -9,6 +9,7 @@
     <string name="edit_list">Lista</string>
     <string name="edit_product">Editar producto</string>
     <string name="edit_product_sl">Editar lista de compra</string>
+    <string name="edit_quantity">Fijar cantidad</string>
     <string name="euro">€</string>
     <string name="kg">kg</string>
     <string name="menu_delete">Borrar producto</string>

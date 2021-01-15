@@ -5,11 +5,21 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import es.unizar.eina.products.Productos.Productos.ProductsDbAdapter;
 import es.unizar.eina.products.R;
@@ -57,10 +67,11 @@ public class ShoppingListEdit extends AppCompatActivity {
             Double price = extras.getDouble(ProductsDbAdapter.KEY_PRICE_SL,0);
             mRowId = extras.getLong(ProductsDbAdapter.KEY_ROWID_SL);
             SL_rowid = mRowId.toString();
+            fillData(SL_rowid);
             if (title != null) {
                 mTitleText.setText(title);
             }
-            fillData(SL_rowid);
+
         }
         addProduct.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,7 +89,16 @@ public class ShoppingListEdit extends AppCompatActivity {
                 bundle.putString(ProductsDbAdapter.KEY_TITLE_SL, title);
                 bundle.putDouble(ProductsDbAdapter.KEY_WEIGHT_SL, 0.0);
                 bundle.putDouble(ProductsDbAdapter.KEY_PRICE_SL, 0.0);
-
+                View v;
+                ArrayList<String> cantidades = new ArrayList<String>();
+                EditText et;
+                String cantidad = "";
+                for (int i = 0; i < mListProd.getCount(); i++) {
+                    v = mListProd.getChildAt(i);
+                    et = (EditText) v.findViewById(R.id.quantityProd);
+                    cantidad = et.getText().toString();
+                    Log.d("HEEEEEEY",cantidad);
+                }
                 if (mRowId != null) {
                     bundle.putLong(ProductsDbAdapter.KEY_ROWID_SL, mRowId);
                 }
