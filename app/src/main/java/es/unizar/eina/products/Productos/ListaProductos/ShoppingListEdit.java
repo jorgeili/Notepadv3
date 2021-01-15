@@ -92,12 +92,11 @@ public class ShoppingListEdit extends AppCompatActivity {
                 View v;
                 ArrayList<String> cantidades = new ArrayList<String>();
                 EditText et;
-                String cantidad = "";
                 for (int i = 0; i < mListProd.getCount(); i++) {
                     v = mListProd.getChildAt(i);
                     et = (EditText) v.findViewById(R.id.quantityProd);
-                    cantidad = et.getText().toString();
-                    Log.d("HEEEEEEY",cantidad);
+                    cantidades.add(et.getText().toString());
+                    Log.d("HEEEEEEY",cantidades.get(i));
                 }
                 if (mRowId != null) {
                     bundle.putLong(ProductsDbAdapter.KEY_ROWID_SL, mRowId);
