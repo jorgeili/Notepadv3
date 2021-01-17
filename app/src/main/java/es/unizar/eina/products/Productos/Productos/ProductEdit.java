@@ -32,11 +32,11 @@ public class ProductEdit extends AppCompatActivity {
         mDbHelper = new ProductsDbAdapter(this);
         mDbHelper.open();
 
-        Button deleteButton = (Button) findViewById(R.id.delete);
+        final Button deleteButton = (Button) findViewById(R.id.delete);
         Button confirmButton = (Button) findViewById(R.id.confirm);
 
         mRowId = null;
-        Bundle extras = getIntent().getExtras();
+        final Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String title = extras.getString(ProductsDbAdapter.KEY_TITLE);
             Double weight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT,0);
@@ -57,6 +57,9 @@ public class ProductEdit extends AppCompatActivity {
                 mPriceText.setText(Double.toString(price));
             }
         }
+        else {
+            deleteButton.setEnabled(false);
+        }
 
         confirmButton.setOnClickListener(new View.OnClickListener() {
 
@@ -64,8 +67,11 @@ public class ProductEdit extends AppCompatActivity {
                 Bundle bundle = new Bundle();
 
                 bundle.putString(ProductsDbAdapter.KEY_TITLE, mTitleText.getText().toString());
-                bundle.putDouble(ProductsDbAdapter.KEY_WEIGHT, Double.parseDouble(mWeightText.getText().toString()));
-                bundle.putDouble(ProductsDbAdapter.KEY_PRICE, Double.parseDouble(mPriceText.getText().toString()));
+                String aux = !mWeightText.getText().toString().equals("") ? mWeightText.getText().toString() : "0";
+                bundle.putDouble(ProductsDbAdapter.KEY_WEIGHT, Double.parseDouble(aux));
+                aux = !mWeightText.getText().toString().equals("") ? mPriceText.getText().toString() : "0";
+                bundle.putDouble(ProductsDbAdapter.KEY_PRICE, Double.parseDouble(aux));
+                aux = !mWeightText.getText().toString().equals("") ? mBodyText.getText().toString() : "0";
                 bundle.putString(ProductsDbAdapter.KEY_BODY, mBodyText.getText().toString());
 
                 if (mRowId != null) {
@@ -82,7 +88,6 @@ public class ProductEdit extends AppCompatActivity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
-
                 mDbHelper.deleteProduct(mRowId);
                 Intent intent = new Intent();
                 intent.putExtra(Intent.EXTRA_TEXT,"ELIMINADO");

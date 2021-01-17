@@ -10,8 +10,12 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.database.DatabaseUtils;
+import android.widget.TextView;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import es.unizar.eina.products.Productos.ListaProductos.EditModel;
 
 /**
  * Simple products database access helper class. Defines the basic CRUD operations
@@ -60,7 +64,7 @@ public class ProductsDbAdapter {
                     + "title text not null, weight double not null, price double not null);";
 
     private static final String DATABASE_CREATE_ADD_PRODUCT =
-            "create table shoppingListsProducts ( _idSL integer, _idP integer, quantity integer not null, primary key(_idSL, _idP));";
+            "create table shoppingListsProducts ( _idSL integer, _idP integer, quantity integer, primary key(_idSL, _idP));";
 
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE_P = "products";
@@ -147,45 +151,102 @@ public class ProductsDbAdapter {
         return mDb.insert(DATABASE_TABLE_P, null, initialValues);
     }
 
-    public long insertProductOnSL(long idSL, long idP, int quantity) {
+    public long insertProductOnSL(long idSL, long idP) {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_ROWID_SL_ADD, idSL);
         initialValues.put(KEY_ROWID_P_ADD, idP);
-        initialValues.put(KEY_QUANTITY, quantity);
+        initialValues.put(KEY_QUANTITY, 1);
 
-        ContentValues updateSL = new ContentValues();
-        String selectQuery = "SELECT weight, price FROM shoppingLists WHERE _id = '" + idSL +"'";
-        Cursor cursor = mDb.rawQuery(selectQuery, null);
-        String aux = "";
-        Double we_sl = 0.0, pr_sl = 0.0, we = 0.0, pr = 0.0;
-        if (cursor.moveToFirst()) {
-            aux = cursor.getString(cursor.getColumnIndex("weight"));
-            we_sl = Double.parseDouble(aux);
-            aux = cursor.getString(cursor.getColumnIndex("price"));
-            pr_sl = Double.parseDouble(aux);
+        long insert = 0;
+        String comprobar = "SELECT count(*) as counter FROM shoppingListsProducts WHERE _idP='"+idP+"' AND _idSL='"+idSL+"'";
+        Cursor cursorComprobacion = mDb.rawQuery(comprobar, null);
+        if (cursorComprobacion.moveToFirst()){
+            if (Integer.parseInt(cursorComprobacion.getString(cursorComprobacion.getColumnIndex("counter")))==0){
+                insert = mDb.insert(DATABASE_TABLE_ADD_PRODUCT, null, initialValues);
+
+                String selectQuery = "SELECT weight, price FROM shoppingLists WHERE _id = '" + idSL +"'";
+                Cursor cursor = mDb.rawQuery(selectQuery, null);
+                Double we_sl = 0.0, pr_sl = 0.0, we = 0.0, pr = 0.0;
+                if (cursor.moveToFirst()) {
+                    we_sl = Double.parseDouble(cursor.getString(cursor.getColumnIndex("weight")));
+                    pr_sl = Double.parseDouble(cursor.getString(cursor.getColumnIndex("price")));
+                }
+                cursor.close();
+
+                selectQuery = "SELECT weight, price FROM products WHERE _id = '" + idP +"'";
+                Cursor newCursor = mDb.rawQuery(selectQuery, null);
+                if (newCursor.moveToFirst()) {
+                    we = Double.parseDouble(newCursor.getString(newCursor.getColumnIndex("weight")));
+                    pr = Double.parseDouble(newCursor.getString(newCursor.getColumnIndex("price")));
+                }
+                newCursor.close();
+
+                ContentValues args = new ContentValues();
+                args.put(KEY_WEIGHT_SL, we_sl + we );
+                args.put(KEY_PRICE_SL, pr_sl + pr );
+                Log.v("PESO", "El peso total es: "+ ( we_sl + we ));
+                mDb.update(DATABASE_TABLE_SL, args, KEY_ROWID_SL + "=" + idSL, null);
+            }
         }
-        cursor.close();
+        cursorComprobacion.close();
+        return insert;
+    }
 
-        selectQuery = "SELECT weight, price FROM products WHERE _id = '" + idP +"'";
-        Cursor newCursor = mDb.rawQuery(selectQuery, null);
-        if (newCursor.moveToFirst()) {
-            aux = newCursor.getString(newCursor.getColumnIndex("weight"));
-            we = Double.parseDouble(aux);
-            aux = newCursor.getString(newCursor.getColumnIndex("price"));
-            pr = Double.parseDouble(aux);
+    public void updateQuantities(ArrayList<EditModel> quantityArrayList, ArrayList<TextView> namesArrayList, String idSL){
+        for (int i = 0; i<quantityArrayList.size(); i++){
+            int oldQuantityValue = 0, quantity = 0;
+            String select = "SELECT _id, weight, price FROM products WHERE title = '"+namesArrayList.get(i).getText()+"'";
+            Cursor cursor = mDb.rawQuery(select, null);
+            if (cursor.moveToFirst()) {
+                do {
+                    //Update quantity
+                    String idProd = cursor.getString(cursor.getColumnIndex("_id"));
+
+                    String oldQuantitySelect = "SELECT quantity FROM shoppingListsProducts WHERE _idP='"+idProd+"' AND _idSL='"+idSL+"'";
+                    Cursor oldQuantityCursor = mDb.rawQuery(oldQuantitySelect,null);
+                    if (oldQuantityCursor.moveToFirst()){
+                        String old = oldQuantityCursor.getString(oldQuantityCursor.getColumnIndex("quantity"));
+                        oldQuantityValue = old.equals("") ? 0 : Integer.parseInt(old);
+                    }
+                    oldQuantityCursor.close();
+
+                    String whereClause = "_idP = '" +idProd+"' AND _idSL = '" + idSL + "'";
+
+                    String quantityStr = quantityArrayList.get(i).getEditTextValue();
+                    quantity = quantityStr.equals("") ? 0 : Integer.parseInt(quantityStr);
+                    if (quantity == 0){
+                        mDb.delete(DATABASE_TABLE_ADD_PRODUCT, whereClause,null);
+                    }
+                    else{
+                        ContentValues args = new ContentValues();
+                        args.put(KEY_QUANTITY, quantityStr);
+                        mDb.update(DATABASE_TABLE_ADD_PRODUCT, args, whereClause, null);
+                    }
+
+                    //Update SL's weight and price
+                    Double we_sl = 0.0, pr_sl = 0.0, we = 0.0, pr = 0.0;
+                    we = Double.parseDouble(cursor.getString(cursor.getColumnIndex("weight")));
+                    pr = Double.parseDouble(cursor.getString(cursor.getColumnIndex("price")));
+
+                    String selectQuery = "SELECT weight, price FROM shoppingLists WHERE _id = '" + idSL +"'";
+                    Cursor cursorSL = mDb.rawQuery(selectQuery, null);
+                    if (cursorSL.moveToFirst()) {
+                        we_sl = Double.parseDouble(cursorSL.getString(cursorSL.getColumnIndex("weight")));
+                        pr_sl = Double.parseDouble(cursorSL.getString(cursorSL.getColumnIndex("price")));
+                    }
+                    cursorSL.close();
+
+                    ContentValues argsSL = new ContentValues();
+                    int mult = quantity == 0 ? 0 : quantity-oldQuantityValue;
+                    argsSL.put(KEY_WEIGHT_SL, we_sl + we*mult );
+                    argsSL.put(KEY_PRICE_SL, pr_sl + pr*mult );
+                    mDb.update(DATABASE_TABLE_SL, argsSL, KEY_ROWID_SL + "=" + idSL, null);
+
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+
         }
-        newCursor.close();
-
-        ContentValues args = new ContentValues();
-        args.put(KEY_WEIGHT_SL, we_sl + we * quantity);
-        args.put(KEY_PRICE_SL, pr_sl + pr * quantity);
-        Log.v("PESO", "EL peso total es: "+ ( we_sl + we * quantity));
-        boolean up = mDb.update(DATABASE_TABLE_SL, args, KEY_ROWID_SL + "=" + idSL, null) >0;
-        Log.v("update", Boolean.toString(up));
-
-
-        //String weight = resultado.split("=");
-        return mDb.insert(DATABASE_TABLE_ADD_PRODUCT, null, initialValues);
     }
 
     /**
@@ -194,8 +255,6 @@ public class ProductsDbAdapter {
      * @return Cursor over all products
      */
     public Cursor fetchAllSLProducts(String rowid_SL) {
-
-
         Cursor mShoppingListsCursor=  mDb.query(DATABASE_TABLE_ADD_PRODUCT, new String[] {KEY_ROWID_P_ADD},
                 KEY_ROWID_SL_ADD, null, null, null, null);
 
@@ -239,7 +298,16 @@ public class ProductsDbAdapter {
             res[1] = Double.parseDouble(aux);
         }
         cursor.close();
-        return  res;
+        return res;
+    }
+
+    public int getNumProducts(String rowId){
+        String queryNumProd = "SELECT count(*) as counter FROM shoppingListsProducts WHERE _idSL = '" + rowId +"'";
+        Cursor cursorNum = mDb.rawQuery(queryNumProd, null);
+        int numProd = 0;
+        if (cursorNum.moveToFirst())
+            numProd = cursorNum.getInt(cursorNum.getColumnIndex("counter"));
+        return numProd;
     }
 
     /**

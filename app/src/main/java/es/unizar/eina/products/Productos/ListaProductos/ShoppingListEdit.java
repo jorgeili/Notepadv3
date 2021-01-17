@@ -5,21 +5,16 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CursorAdapter;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
+
+import es.unizar.eina.products.Productos.ListaProductos.CustomeAdapter;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import es.unizar.eina.products.Productos.Productos.ProductsDbAdapter;
 import es.unizar.eina.products.R;
@@ -28,6 +23,7 @@ public class ShoppingListEdit extends AppCompatActivity {
 
     private Cursor mProductsCursor;
 
+    private CustomeAdapter customAdapter;
     private EditText mTitleText;
     private EditText mWeightText;
     private EditText mPriceText;
@@ -35,6 +31,10 @@ public class ShoppingListEdit extends AppCompatActivity {
     private Long mRowId;
     private ProductsDbAdapter mDbHelper;
     public String SL_rowid;
+    public ArrayList<EditModel> quantityArrayList;
+    public ArrayList<TextView> namesArrayList;
+    public ArrayList<TextView> weightArrayList;
+    public ArrayList<TextView> pricesArrayList;
 
     private static final int ACTIVITY_ADD_PRODUCT=1;
 
@@ -50,6 +50,7 @@ public class ShoppingListEdit extends AppCompatActivity {
         mPriceText = (EditText) findViewById(R.id.title_price);
         mPriceText.setEnabled(false);
         mListProd = (ListView) findViewById(R.id.products_in_list);
+        mListProd.setItemsCanFocus(true);
 
         mDbHelper = new ProductsDbAdapter(this);
         mDbHelper.open();
@@ -57,25 +58,31 @@ public class ShoppingListEdit extends AppCompatActivity {
         Button addProduct = (Button) findViewById(R.id.button_add);
         Button deleteButton = (Button) findViewById(R.id.delete_list);
         Button confirmButton = (Button) findViewById(R.id.confirm_list);
+        Button refreshButton = (Button) findViewById(R.id.refresh);
 
         mRowId = null;
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String title = extras.getString(ProductsDbAdapter.KEY_TITLE_SL);
-            Double weight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT_SL,0);
-            Double price = extras.getDouble(ProductsDbAdapter.KEY_PRICE_SL,0);
             mRowId = extras.getLong(ProductsDbAdapter.KEY_ROWID_SL);
+
             SL_rowid = mRowId.toString();
-            fillData(SL_rowid);
+
+            fillData();
+
             if (title != null) {
                 mTitleText.setText(title);
             }
 
         }
+        else {
+            deleteButton.setEnabled(false);
+        }
         addProduct.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mDbHelper.updateQuantities(quantityArrayList, namesArrayList, SL_rowid);
                 openAddProductActivity();
             }
         });
@@ -87,20 +94,10 @@ public class ShoppingListEdit extends AppCompatActivity {
 
                 String title = mTitleText.getText().toString().equals("") ? "Sin nombre" : mTitleText.getText().toString();
                 bundle.putString(ProductsDbAdapter.KEY_TITLE_SL, title);
-                bundle.putDouble(ProductsDbAdapter.KEY_WEIGHT_SL, 0.0);
-                bundle.putDouble(ProductsDbAdapter.KEY_PRICE_SL, 0.0);
-                View v;
-                ArrayList<String> cantidades = new ArrayList<String>();
-                EditText et;
-                for (int i = 0; i < mListProd.getCount(); i++) {
-                    v = mListProd.getChildAt(i);
-                    et = (EditText) v.findViewById(R.id.quantityProd);
-                    cantidades.add(et.getText().toString());
-                    Log.d("HEEEEEEY",cantidades.get(i));
-                }
                 if (mRowId != null) {
                     bundle.putLong(ProductsDbAdapter.KEY_ROWID_SL, mRowId);
                 }
+                mDbHelper.updateQuantities(quantityArrayList, namesArrayList, SL_rowid);
 
                 Intent mIntent = new Intent();
                 mIntent.putExtras(bundle);
@@ -120,31 +117,60 @@ public class ShoppingListEdit extends AppCompatActivity {
                 intent.putExtra(Intent.EXTRA_TEXT,"ELIMINADO");
                 setResult(RESULT_OK, intent);
                 finish();
-                //fillData(SL_rowid);
             }
 
         });
+
+        refreshButton.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View view) {
+                mDbHelper.updateQuantities(quantityArrayList, namesArrayList, SL_rowid);
+                fillData();
+            }
+        });
     }
 
-    private void fillData(String SL_rowid) {
-        // Get all of the notes from the database and create the item list
-        mProductsCursor = mDbHelper.fetchAllSLProducts(SL_rowid);
-        startManagingCursor(mProductsCursor);
+    private void fillData(){
+        namesArrayList = new ArrayList<>();
+        weightArrayList = new ArrayList<>();
+        pricesArrayList = new ArrayList<>();
+        quantityArrayList = new ArrayList<>();
 
-        // Create an array to specify the fields we want to display in the list
-        String[] from = new String[] { ProductsDbAdapter.KEY_TITLE, ProductsDbAdapter.KEY_WEIGHT, ProductsDbAdapter.KEY_PRICE, ProductsDbAdapter.KEY_QUANTITY};
+        if (mDbHelper.getNumProducts(SL_rowid) > 0) {
+            Cursor cursor = mDbHelper.fetchAllSLProducts(SL_rowid);
+            if (cursor.moveToFirst()) {
+                do {
+                    TextView textViewName = new TextView(this);
+                    textViewName.setEnabled(false);
+                    textViewName.setText(cursor.getString(cursor.getColumnIndex("title")));
+                    namesArrayList.add(textViewName);
 
-        // and an array of the fields we want to bind those fields to
-        int[] to = new int[] { R.id.nameProd, R.id.weightProd, R.id.priceProd, R.id.quantityProd};
+                    TextView textViewWeight = new TextView(this);
+                    textViewWeight.setEnabled(false);
+                    textViewWeight.setText(cursor.getString(cursor.getColumnIndex("weight")));
+                    weightArrayList.add(textViewWeight);
 
-        // Now create an array adapter and set it to display using our row
-        SimpleCursorAdapter products =
-                new SimpleCursorAdapter(this, R.layout.product_in_list, mProductsCursor, from, to);
-        mListProd.setAdapter(products);
+                    TextView textViewPrice = new TextView(this);
+                    textViewPrice.setEnabled(false);
+                    textViewPrice.setText(cursor.getString(cursor.getColumnIndex("price")));
+                    pricesArrayList.add(textViewPrice);
+
+                    EditModel editModel = new EditModel();
+                    editModel.setEditTextValue(cursor.getString(cursor.getColumnIndex("quantity")));
+                    quantityArrayList.add(editModel);
+
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
+            customAdapter = new CustomeAdapter(this,quantityArrayList, namesArrayList, weightArrayList, pricesArrayList);
+            mListProd.setAdapter(customAdapter);
+        }
 
         Double[] res = mDbHelper.getWeightPriceSL(SL_rowid);
         mWeightText.setText(Double.toString(res[0]));
         mPriceText.setText(Double.toString(res[1]));
+
+        Log.v("Num cantidades: ", String.valueOf(quantityArrayList.size()));
     }
 
     public void openAddProductActivity() {
@@ -152,7 +178,7 @@ public class ShoppingListEdit extends AppCompatActivity {
         Log.v("spinner","Id lista " + SL_rowid);
         intentsl.putExtra(Intent.EXTRA_TEXT,SL_rowid);
         startActivityForResult(intentsl, ACTIVITY_ADD_PRODUCT);
-        fillData(SL_rowid);
+        fillData();
     }
 
     @Override
@@ -161,7 +187,7 @@ public class ShoppingListEdit extends AppCompatActivity {
         Bundle extras = intent.getExtras();
         switch (requestCode) {
             case ACTIVITY_ADD_PRODUCT:
-
+                fillData();
                 break;
         }
     }

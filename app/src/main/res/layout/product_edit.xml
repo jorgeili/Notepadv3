@@ -40,7 +40,7 @@
             android:textAlignment="viewEnd"
             android:gravity="end" />
         <EditText android:id="@+id/weightProd"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
@@ -73,7 +73,7 @@
             android:gravity="end" />
 
         <EditText android:id="@+id/priceProd"
-            android:inputType="number"
+            android:inputType="numberDecimal"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.2"
