@@ -33,7 +33,7 @@ public class ShoppingList extends AppCompatActivity {
     private ListView mList;
 
 
-    /** Called when the activity is first created. */
+    /** Called when  the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
