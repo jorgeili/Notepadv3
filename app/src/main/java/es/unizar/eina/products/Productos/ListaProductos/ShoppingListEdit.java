@@ -58,7 +58,6 @@ public class ShoppingListEdit extends AppCompatActivity {
         Button addProduct = (Button) findViewById(R.id.button_add);
         Button deleteButton = (Button) findViewById(R.id.delete_list);
         Button confirmButton = (Button) findViewById(R.id.confirm_list);
-        Button refreshButton = (Button) findViewById(R.id.refresh);
 
         mRowId = null;
 
@@ -121,13 +120,6 @@ public class ShoppingListEdit extends AppCompatActivity {
 
         });
 
-        refreshButton.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View view) {
-                mDbHelper.updateQuantities(quantityArrayList, namesArrayList, SL_rowid);
-                fillData();
-            }
-        });
     }
 
     private void fillData(){

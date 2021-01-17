@@ -194,7 +194,7 @@ public class ProductsDbAdapter {
 
     public void updateQuantities(ArrayList<EditModel> quantityArrayList, ArrayList<TextView> namesArrayList, String idSL){
         for (int i = 0; i<quantityArrayList.size(); i++){
-            int oldQuantityValue = 0, quantity = 0;
+            int oldQuantityValue = 0, quantity;
             String select = "SELECT _id, weight, price FROM products WHERE title = '"+namesArrayList.get(i).getText()+"'";
             Cursor cursor = mDb.rawQuery(select, null);
             if (cursor.moveToFirst()) {
@@ -224,7 +224,7 @@ public class ProductsDbAdapter {
                     }
 
                     //Update SL's weight and price
-                    Double we_sl = 0.0, pr_sl = 0.0, we = 0.0, pr = 0.0;
+                    Double we_sl = 0.0, pr_sl = 0.0, we, pr;
                     we = Double.parseDouble(cursor.getString(cursor.getColumnIndex("weight")));
                     pr = Double.parseDouble(cursor.getString(cursor.getColumnIndex("price")));
 
@@ -237,9 +237,14 @@ public class ProductsDbAdapter {
                     cursorSL.close();
 
                     ContentValues argsSL = new ContentValues();
-                    int mult = quantity == 0 ? 0 : quantity-oldQuantityValue;
-                    argsSL.put(KEY_WEIGHT_SL, we_sl + we*mult );
-                    argsSL.put(KEY_PRICE_SL, pr_sl + pr*mult );
+                    if (quantity == 0){
+                        argsSL.put(KEY_WEIGHT_SL, we_sl - we*oldQuantityValue );
+                        argsSL.put(KEY_PRICE_SL, pr_sl - pr*oldQuantityValue );
+                    }
+                    else{
+                        argsSL.put(KEY_WEIGHT_SL, we_sl + we*(quantity-oldQuantityValue) );
+                        argsSL.put(KEY_PRICE_SL, pr_sl + pr*(quantity-oldQuantityValue) );
+                    }
                     mDb.update(DATABASE_TABLE_SL, argsSL, KEY_ROWID_SL + "=" + idSL, null);
 
                 } while (cursor.moveToNext());
