@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
+import es.unizar.eina.products.Productos.send.SendAbstractionImpl;
 import es.unizar.eina.products.R;
 import es.unizar.eina.products.Productos.ListaProductos.*;
 
@@ -27,7 +28,6 @@ public class Products extends AppCompatActivity {
     private static final int ORDER_PRICE= Menu.FIRST + 4;
     private static final int ORDER_WEIGHT = Menu.FIRST + 5;
     private static final int SHOW_SHOPPING_LISTS= Menu.FIRST + 7;
-
 
     private ProductsDbAdapter mDbHelper;
     private Cursor mProductsCursor;

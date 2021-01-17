@@ -8,6 +8,8 @@
     <string name="description">Descripción</string>
     <string name="edit_list">Lista</string>
     <string name="edit_product">Editar producto</string>
+    <string name="send_mail">Enviar por correo</string>
+    <string name="send_sms">Enviar por SMS</string>
     <string name="edit_product_sl">Editar lista de compra</string>
     <string name="edit_quantity">Fijar cantidad</string>
     <string name="euro">€</string>

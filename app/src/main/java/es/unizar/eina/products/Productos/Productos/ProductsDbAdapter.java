@@ -458,6 +458,27 @@ public class ProductsDbAdapter {
     }
 
     /**
+     * Return a Cursor positioned at the product that matches the given rowId
+     *
+     * @param rowId id of product to retrieve
+     * @return Cursor positioned to matching product, if found
+     * @throws SQLException if product could not be found/retrieved
+     */
+    public Cursor fetchShoppingList(long rowId) throws SQLException {
+
+        Cursor mCursor =
+                mDb.query(true, DATABASE_TABLE_SL, new String[] {KEY_ROWID_SL,
+                                KEY_TITLE_SL, KEY_WEIGHT_SL, KEY_PRICE_SL},
+                        KEY_ROWID_SL + "=" + rowId, null,
+                        null, null, null, null);
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+        }
+        return mCursor;
+
+    }
+
+    /**
      * Update the product using the details provided. The product to be updated is
      * specified using the rowId, and it is altered to use the title and body
      * values passed in

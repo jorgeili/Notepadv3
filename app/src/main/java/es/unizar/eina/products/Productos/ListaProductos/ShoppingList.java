@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import es.unizar.eina.products.Productos.Productos.ProductsDbAdapter;
+import es.unizar.eina.products.Productos.send.SendAbstractionImpl;
 import es.unizar.eina.products.R;
 
 
@@ -27,6 +28,8 @@ public class ShoppingList extends AppCompatActivity {
     private static final int ORDER_NAME = Menu.FIRST + 3;
     private static final int ORDER_PRICE= Menu.FIRST + 4;
     private static final int ORDER_WEIGHT = Menu.FIRST + 5;
+    private static final int SEND_EMAIL = Menu.FIRST + 6;
+    private static final int SEND_SMS = Menu.FIRST + 7;
 
     private ProductsDbAdapter mDbHelper;
     private Cursor mShoppingListsCursor;
@@ -114,6 +117,8 @@ public class ShoppingList extends AppCompatActivity {
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         menu.add(Menu.NONE, EDIT_ID, Menu.NONE, R.string.edit_product_sl);
+        menu.add(Menu.NONE, SEND_EMAIL, Menu.NONE, R.string.send_mail);
+        menu.add(Menu.NONE, SEND_SMS, Menu.NONE, R.string.send_sms);
     }
 
     @Override
@@ -122,6 +127,14 @@ public class ShoppingList extends AppCompatActivity {
             case EDIT_ID:
                 AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
                 editShoppingList(info.position, info.id);
+                return true;
+            case SEND_EMAIL:
+                info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                sendEmail(info.id);
+                return true;
+            case SEND_SMS:
+                info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                sendSMS(info.id);
                 return true;
         }
         return super.onContextItemSelected(item);
@@ -169,6 +182,24 @@ public class ShoppingList extends AppCompatActivity {
             }
             fillData(0);
         }
+    }
+
+    protected void sendEmail(long id) {
+        Cursor note = mDbHelper.fetchShoppingList(id);
+        String title = note.getString(note.getColumnIndexOrThrow(mDbHelper.KEY_TITLE_SL));
+        String price = note.getString(note.getColumnIndexOrThrow(mDbHelper.KEY_PRICE_SL));
+        String body = note.getString(note.getColumnIndexOrThrow(mDbHelper.KEY_WEIGHT_SL));
+        SendAbstractionImpl mI = new SendAbstractionImpl(this, "EMAIL");
+        mI.send(title,price, body);
+    }
+
+    protected void sendSMS(long id) {
+        Cursor note = mDbHelper.fetchShoppingList(id);
+        String title = note.getString(note.getColumnIndexOrThrow(mDbHelper.KEY_TITLE_SL));
+        String price = note.getString(note.getColumnIndexOrThrow(mDbHelper.KEY_PRICE_SL));
+        String body = note.getString(note.getColumnIndexOrThrow(mDbHelper.KEY_WEIGHT_SL));
+        SendAbstractionImpl sI = new SendAbstractionImpl(this, "SMS");
+        sI.send(title,price,body);
     }
 
 }
