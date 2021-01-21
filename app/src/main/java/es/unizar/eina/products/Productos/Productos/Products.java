@@ -12,7 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-import es.unizar.eina.products.Productos.send.SendAbstractionImpl;
+import es.unizar.eina.products.Productos.BD.ProductsDbAdapter;
 import es.unizar.eina.products.R;
 import es.unizar.eina.products.Productos.ListaProductos.*;
 

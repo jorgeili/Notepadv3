@@ -1,4 +1,4 @@
-package es.unizar.eina.products.Productos.Productos;
+package es.unizar.eina.products.Productos.BD;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -349,6 +349,7 @@ public class ProductsDbAdapter {
      * @return true if deleted, false otherwise
      */
     public boolean deleteShoppingList(long rowId) {
+        mDb.delete(DATABASE_TABLE_ADD_PRODUCT, KEY_ROWID_SL_ADD + "=" +rowId, null);
 
         return mDb.delete(DATABASE_TABLE_SL, KEY_ROWID_SL + "=" + rowId, null) > 0;
     }

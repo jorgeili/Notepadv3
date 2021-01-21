@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import es.unizar.eina.products.Productos.Productos.ProductsDbAdapter;
+import es.unizar.eina.products.Productos.BD.ProductsDbAdapter;
 import es.unizar.eina.products.R;
 
 /**
@@ -24,8 +24,6 @@ public class CustomeAdapter extends BaseAdapter {
     public static ArrayList<TextView> weightsArrayList;
     public static ArrayList<TextView> pricesArrayList;
 
-    private ProductsDbAdapter mDB;
-
     public CustomeAdapter(Context context, ArrayList<EditModel> editModelArrayList,
                           ArrayList<TextView> namesArrayList, ArrayList<TextView> weightsArrayList,
                           ArrayList<TextView> pricesArrayList) {
@@ -34,10 +32,6 @@ public class CustomeAdapter extends BaseAdapter {
         this.namesArrayList = namesArrayList;
         this.weightsArrayList = weightsArrayList;
         this.pricesArrayList = pricesArrayList;
-    }
-    @Override
-    public int getViewTypeCount() {
-        return getCount();
     }
     @Override
     public int getItemViewType(int position) {

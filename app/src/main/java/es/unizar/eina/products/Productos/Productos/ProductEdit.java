@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import es.unizar.eina.products.Productos.BD.ProductsDbAdapter;
 import es.unizar.eina.products.R;
 
 public class ProductEdit extends AppCompatActivity {
@@ -39,8 +40,8 @@ public class ProductEdit extends AppCompatActivity {
         final Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String title = extras.getString(ProductsDbAdapter.KEY_TITLE);
-            Double weight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT,0);
-            Double price = extras.getDouble(ProductsDbAdapter.KEY_PRICE,0);
+            Double weight = extras.getDouble(ProductsDbAdapter.KEY_WEIGHT);
+            Double price = extras.getDouble(ProductsDbAdapter.KEY_PRICE);
             String body = extras.getString(ProductsDbAdapter.KEY_BODY);
             mRowId = extras.getLong(ProductsDbAdapter.KEY_ROWID);
 
@@ -67,11 +68,8 @@ public class ProductEdit extends AppCompatActivity {
                 Bundle bundle = new Bundle();
 
                 bundle.putString(ProductsDbAdapter.KEY_TITLE, mTitleText.getText().toString());
-                String aux = !mWeightText.getText().toString().equals("") ? mWeightText.getText().toString() : "0";
-                bundle.putDouble(ProductsDbAdapter.KEY_WEIGHT, Double.parseDouble(aux));
-                aux = !mWeightText.getText().toString().equals("") ? mPriceText.getText().toString() : "0";
-                bundle.putDouble(ProductsDbAdapter.KEY_PRICE, Double.parseDouble(aux));
-                aux = !mWeightText.getText().toString().equals("") ? mBodyText.getText().toString() : "0";
+                bundle.putDouble(ProductsDbAdapter.KEY_WEIGHT, Double.parseDouble(mWeightText.getText().toString()));
+                bundle.putDouble(ProductsDbAdapter.KEY_PRICE, Double.parseDouble(mPriceText.getText().toString()));
                 bundle.putString(ProductsDbAdapter.KEY_BODY, mBodyText.getText().toString());
 
                 if (mRowId != null) {

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,7 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-import es.unizar.eina.products.Productos.Productos.ProductsDbAdapter;
+import es.unizar.eina.products.Productos.BD.ProductsDbAdapter;
 import es.unizar.eina.products.Productos.send.SendAbstractionImpl;
 import es.unizar.eina.products.R;
 

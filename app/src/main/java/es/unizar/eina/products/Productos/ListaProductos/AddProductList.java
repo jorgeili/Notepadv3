@@ -14,8 +14,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-import es.unizar.eina.products.Productos.Productos.ProductEdit;
-import es.unizar.eina.products.Productos.Productos.ProductsDbAdapter;
+import es.unizar.eina.products.Productos.BD.ProductsDbAdapter;
 import es.unizar.eina.products.R;
 
 
@@ -80,26 +79,11 @@ public class AddProductList extends AppCompatActivity {
     }
 
 
-
-
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         menu.add(Menu.NONE, ADD_ID, Menu.NONE, R.string.add_product);
     }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case ADD_ID:
-                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                long add = mDbHelper.insertProductOnSL(Long.parseLong(value), info.id);
-                return add > 0;
-        }
-        return super.onContextItemSelected(item);
-    }
-
-
 
 }

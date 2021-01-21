@@ -9,19 +9,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-
-import es.unizar.eina.products.Productos.ListaProductos.CustomeAdapter;
 
 import java.util.ArrayList;
 
-import es.unizar.eina.products.Productos.Productos.ProductsDbAdapter;
+import es.unizar.eina.products.Productos.BD.ProductsDbAdapter;
 import es.unizar.eina.products.R;
 
 public class ShoppingListEdit extends AppCompatActivity {
-
-    private Cursor mProductsCursor;
 
     private CustomeAdapter customAdapter;
     private EditText mTitleText;
@@ -183,34 +178,4 @@ public class ShoppingListEdit extends AppCompatActivity {
                 break;
         }
     }
-
-    /*
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.product_edit);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_note_edit, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-    */
 }
