@@ -1,6 +1,7 @@
 package es.unizar.eina.products.Productos.send;
 
 import android.app.Activity;
+import android.database.Cursor;
 
 /** Implementa la interfaz de la abstraccion utilizando (delegando a) una referencia a un objeto de tipo implementor  */
 public class SendAbstractionImpl implements SendAbstraction {
@@ -9,14 +10,11 @@ public class SendAbstractionImpl implements SendAbstraction {
 	private SendImplementor implementor;
 	
 	/** Constructor de la clase. Inicializa el objeto delegado
-	 * @param sourceActivity actividad desde la cual se abrira la actividad encargada de enviar la nota
+	 * @param sourceActivity actividad desde la cual se abrira la actividad encargada de enviar el producto
 	 * @param method parametro potencialmente utilizable para instanciar el objeto delegado
 	 */
 	public SendAbstractionImpl(Activity sourceActivity, String method) {
-		if(method.equalsIgnoreCase("SMS")){
-			implementor = new SMSImplementor(sourceActivity);
-		}
-		else {
+		if(method.equalsIgnoreCase("EMAIL")){
 			implementor = new MailImplementor(sourceActivity);
 		}
 	}
@@ -26,7 +24,7 @@ public class SendAbstractionImpl implements SendAbstraction {
 	 * @param price precio
 	 * @param weight peso
      */
-	public void send(String subject, String price, String weight) {
-		implementor.send(subject, price, weight);
+	public void send(String subject, String price, String weight, Cursor listProducts) {
+		implementor.send(subject, price, weight, listProducts);
 	}
 }

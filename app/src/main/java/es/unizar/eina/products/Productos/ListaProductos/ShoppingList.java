@@ -28,7 +28,6 @@ public class ShoppingList extends AppCompatActivity {
     private static final int ORDER_PRICE= Menu.FIRST + 4;
     private static final int ORDER_WEIGHT = Menu.FIRST + 5;
     private static final int SEND_EMAIL = Menu.FIRST + 6;
-    private static final int SEND_SMS = Menu.FIRST + 7;
 
     private ProductsDbAdapter mDbHelper;
     private Cursor mShoppingListsCursor;
@@ -53,19 +52,15 @@ public class ShoppingList extends AppCompatActivity {
 
     private void fillData(int orderCriteria) {
         if(orderCriteria == 0) {
-            // Get all of the notes from the database and create the item list
             mShoppingListsCursor = mDbHelper.fetchAllShoppingLists();
             startManagingCursor(mShoppingListsCursor);
         } else if (orderCriteria == 1) {
-            // Get all of the notes ordered by name from the database and create the item list
             mShoppingListsCursor = mDbHelper.fetchAllShoppingListsByName();
             startManagingCursor(mShoppingListsCursor);
         }else if (orderCriteria == 2) {
-            // Get all of the notes ordered by price from the database and create the item list
             mShoppingListsCursor = mDbHelper.fetchAllShoppingListsByPrice();
             startManagingCursor(mShoppingListsCursor);
         }else if (orderCriteria == 3) {
-            // Get all of the notes ordered by weight from the database and create the item list
             mShoppingListsCursor = mDbHelper.fetchAllShoppingListsByWeight();
             startManagingCursor(mShoppingListsCursor);
         }
@@ -117,7 +112,6 @@ public class ShoppingList extends AppCompatActivity {
         super.onCreateContextMenu(menu, v, menuInfo);
         menu.add(Menu.NONE, EDIT_ID, Menu.NONE, R.string.edit_product_sl);
         menu.add(Menu.NONE, SEND_EMAIL, Menu.NONE, R.string.send_mail);
-        menu.add(Menu.NONE, SEND_SMS, Menu.NONE, R.string.send_sms);
     }
 
     @Override
@@ -130,10 +124,6 @@ public class ShoppingList extends AppCompatActivity {
             case SEND_EMAIL:
                 info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
                 sendEmail(info.id);
-                return true;
-            case SEND_SMS:
-                info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-                sendSMS(info.id);
                 return true;
         }
         return super.onContextItemSelected(item);
@@ -184,21 +174,13 @@ public class ShoppingList extends AppCompatActivity {
     }
 
     protected void sendEmail(long id) {
-        Cursor note = mDbHelper.fetchShoppingList(id);
-        String title = note.getString(note.getColumnIndexOrThrow(mDbHelper.KEY_TITLE_SL));
-        String price = note.getString(note.getColumnIndexOrThrow(mDbHelper.KEY_PRICE_SL));
-        String body = note.getString(note.getColumnIndexOrThrow(mDbHelper.KEY_WEIGHT_SL));
+        Cursor product = mDbHelper.fetchShoppingList(id);
+        Cursor listProducts = mDbHelper.fetchAllSLProducts(Long.toString(id));
+        String title = product.getString(product.getColumnIndexOrThrow(mDbHelper.KEY_TITLE_SL));
+        String price = product.getString(product.getColumnIndexOrThrow(mDbHelper.KEY_PRICE_SL));
+        String body = product.getString(product.getColumnIndexOrThrow(mDbHelper.KEY_WEIGHT_SL));
         SendAbstractionImpl mI = new SendAbstractionImpl(this, "EMAIL");
-        mI.send(title,price, body);
-    }
-
-    protected void sendSMS(long id) {
-        Cursor note = mDbHelper.fetchShoppingList(id);
-        String title = note.getString(note.getColumnIndexOrThrow(mDbHelper.KEY_TITLE_SL));
-        String price = note.getString(note.getColumnIndexOrThrow(mDbHelper.KEY_PRICE_SL));
-        String body = note.getString(note.getColumnIndexOrThrow(mDbHelper.KEY_WEIGHT_SL));
-        SendAbstractionImpl sI = new SendAbstractionImpl(this, "SMS");
-        sI.send(title,price,body);
+        mI.send(title,price, body,listProducts);
     }
 
 }

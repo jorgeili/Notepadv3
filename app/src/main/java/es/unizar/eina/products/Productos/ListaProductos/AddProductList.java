@@ -62,7 +62,6 @@ public class AddProductList extends AppCompatActivity {
     }
 
     private void fillData() {
-        // Get all of the notes from the database and create the item list
         mProductsCursor = mDbHelper.fetchAllProducts();
         startManagingCursor(mProductsCursor);
 
@@ -86,4 +85,14 @@ public class AddProductList extends AppCompatActivity {
         menu.add(Menu.NONE, ADD_ID, Menu.NONE, R.string.add_product);
     }
 
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case ADD_ID:
+                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                long add = mDbHelper.insertProductOnSL(Long.parseLong(value), info.id);
+                return add > 0;
+        }
+        return super.onContextItemSelected(item);
+    }
 }

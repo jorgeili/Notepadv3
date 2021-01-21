@@ -93,14 +93,14 @@
             android:padding="0dp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.9"
+            android:layout_weight="0.85"
             android:divider="@drawable/border"
             android:dividerHeight="3dp"/>
         <Button
             android:id="@+id/button_add"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.1"
+            android:layout_weight="0.15"
             android:layout_centerHorizontal="true"
             android:text="@string/add_product_to_list" />
     </LinearLayout>

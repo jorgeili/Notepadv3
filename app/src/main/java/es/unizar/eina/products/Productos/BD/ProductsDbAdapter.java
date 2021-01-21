@@ -283,9 +283,9 @@ public class ProductsDbAdapter {
             selectQuery += " ) ";
         }
         Cursor finalCursor = mDb.rawQuery(selectQuery, null);
-        String resultado = DatabaseUtils.dumpCursorToString(finalCursor);
+        //String resultado = DatabaseUtils.dumpCursorToString(finalCursor);
 
-        Log.d("VOLCADOOOO1:",resultado);
+        //Log.d("VOLCADO:",resultado);
         mShoppingListsCursor.close();
 
         return finalCursor;

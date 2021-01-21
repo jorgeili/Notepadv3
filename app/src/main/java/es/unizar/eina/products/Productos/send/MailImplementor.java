@@ -2,6 +2,10 @@ package es.unizar.eina.products.Productos.send;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.Cursor;
+import android.widget.TextView;
+
+import es.unizar.eina.products.Productos.ListaProductos.EditModel;
 
 /** Concrete implementor utilizando aplicacion por defecto de Android para gestionar mail. No funciona en el emulador si no se ha configurado previamente el mail */
 public class MailImplementor implements SendImplementor{
@@ -33,11 +37,22 @@ public class MailImplementor implements SendImplementor{
     * @param price precio
     * @param weight peso
     */
-   public void send (String subject, String price, String weight) {
+   public void send (String subject, String price, String weight, Cursor listProducts) {
        Intent emailIntent = new Intent (Intent.ACTION_SEND);
        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
        emailIntent.setType("plain/text");
-       emailIntent.putExtra(Intent.EXTRA_TEXT, "PRECIO: " + price + " PESO: " + weight);
+       String contenidoCorreo = "PRECIO: " + price + " PESO: " + weight + "\n";
+       if (listProducts.moveToFirst()) {
+           do {
+               contenidoCorreo += "Producto: " + listProducts.getString(listProducts.getColumnIndex("title")) +
+                       " PRECIO: " + listProducts.getString(listProducts.getColumnIndex("price")) +
+                       " PESO: " + listProducts.getString(listProducts.getColumnIndex("weight")) +
+                       " CANTIDAD: " + listProducts.getString(listProducts.getColumnIndex("quantity")) + "\n";
+
+           } while (listProducts.moveToNext());
+       }
+       emailIntent.putExtra(Intent.EXTRA_TEXT, contenidoCorreo);
+       listProducts.close();
        getSourceActivity().startActivity(Intent.createChooser(emailIntent, "Send mail..."));
    }
 

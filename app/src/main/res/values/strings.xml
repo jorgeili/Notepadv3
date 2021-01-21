@@ -23,6 +23,9 @@
     <string name="menu_order_prod_price">Ordenar por precio</string>
     <string name="menu_order_prod_weight">Ordenar por peso</string>
     <string name="menu_shopping_lists">Listas de Compra</string>
+    <string name="prueba_unitaria">Test unitario</string>
+    <string name="prueba_volumen">Test volumen</string>
+    <string name="prueba_sobrecarga">Test sobrecarga</string>
     <string name="name">Nombre</string>
     <string name="no_notes">Sin productos</string>
     <string name="price">Precio</string>

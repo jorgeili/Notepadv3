@@ -14,6 +14,7 @@ import android.widget.SimpleCursorAdapter;
 
 import es.unizar.eina.products.Productos.BD.ProductsDbAdapter;
 import es.unizar.eina.products.R;
+import es.unizar.eina.products.Productos.Test.*;
 import es.unizar.eina.products.Productos.ListaProductos.*;
 
 
@@ -28,6 +29,9 @@ public class Products extends AppCompatActivity {
     private static final int ORDER_PRICE= Menu.FIRST + 4;
     private static final int ORDER_WEIGHT = Menu.FIRST + 5;
     private static final int SHOW_SHOPPING_LISTS= Menu.FIRST + 7;
+    private static final int PRUEBA_UNITARIA_ID= Menu.FIRST + 8;
+    private static final int PRUEBA_VOLUMEN_ID= Menu.FIRST + 9;
+    private static final int PRUEBA_SOBRECARGA_ID= Menu.FIRST + 10;
 
     private ProductsDbAdapter mDbHelper;
     private Cursor mProductsCursor;
@@ -52,19 +56,15 @@ public class Products extends AppCompatActivity {
 
     private void fillData(int orderCriteria) {
         if(orderCriteria == 0) {
-            // Get all of the notes from the database and create the item list
             mProductsCursor = mDbHelper.fetchAllProducts();
             startManagingCursor(mProductsCursor);
         } else if (orderCriteria == 1) {
-            // Get all of the notes ordered by name from the database and create the item list
             mProductsCursor = mDbHelper.fetchAllProductsByName();
             startManagingCursor(mProductsCursor);
         }else if (orderCriteria == 2) {
-            // Get all of the notes ordered by price from the database and create the item list
             mProductsCursor = mDbHelper.fetchAllProductsByPrice();
             startManagingCursor(mProductsCursor);
         }else if (orderCriteria == 3) {
-            // Get all of the notes ordered by weight from the database and create the item list
             mProductsCursor = mDbHelper.fetchAllProductsByWeight();
             startManagingCursor(mProductsCursor);
         }
@@ -89,11 +89,15 @@ public class Products extends AppCompatActivity {
         menu.add(Menu.NONE, ORDER_PRICE, Menu.NONE, R.string.menu_order_prod_price);
         menu.add(Menu.NONE, ORDER_WEIGHT, Menu.NONE, R.string.menu_order_prod_weight);
         menu.add(Menu.NONE, SHOW_SHOPPING_LISTS, Menu.NONE, R.string.menu_shopping_lists);
+        menu.add(Menu.NONE, PRUEBA_UNITARIA_ID, Menu.NONE, R.string.prueba_unitaria);
+        menu.add(Menu.NONE, PRUEBA_VOLUMEN_ID, Menu.NONE, R.string.prueba_volumen);
+        menu.add(Menu.NONE, PRUEBA_SOBRECARGA_ID, Menu.NONE, R.string.prueba_sobrecarga);
         return result;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Test pruebas = new Test(this);
         switch (item.getItemId()) {
             case INSERT_ID:
                 createProduct();
@@ -106,6 +110,24 @@ public class Products extends AppCompatActivity {
                 return true;
             case ORDER_WEIGHT:
                 fillData(3);
+                return true;
+            case PRUEBA_UNITARIA_ID:
+                if(pruebas.pruebasUnitarias()) {
+                    fillData(0);
+                    return true;
+                }
+                fillData(0);
+                return false;
+            case PRUEBA_VOLUMEN_ID:
+                if(pruebas.testVolumen()) {
+                    fillData(0);
+                    return true;
+                }
+                fillData(0);
+                return false;
+            case PRUEBA_SOBRECARGA_ID:
+                pruebas.testSobrecarga();
+                fillData(0);
                 return true;
             case SHOW_SHOPPING_LISTS:
                 Intent showShoppingLists = new Intent(this,ShoppingList.class);
